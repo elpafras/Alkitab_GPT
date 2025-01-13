@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/menu_subitem_group1"
+            android:title="@string/situs2">
+            <menu>
+                <item
+                    android:id="@+id/studi_alkitab"
+                    android:title="@string/studi_alkitab"/>
+                <item
+                    android:id="@+id/alkitab_media"
+                    android:title="@string/alkitab_media"/>
+            </menu>
+        </item>
+
+        <item
+            android:id="@+id/menu_subitem_group2"
+            android:title="@string/aplikasi_5">
+            <menu>
+                <item
+                    android:id="@+id/Alkitab"
+                    android:title="@string/alkitab"/>
+                <item
+                    android:id="@+id/alkiPedia"
+                    android:title="@string/alkipedia"/>
+                <item
+                    android:id="@+id/tafsiran"
+                    android:title="@string/tafsiran"/>
+                <item
+                    android:id="@+id/kamus"
+                    android:title="@string/kamus_alkitab"/>
+                <item
+                    android:id="@+id/peta"
+                    android:title="@string/lain"/>
+            </menu>
+        </item>
+    </group>
+</menu>

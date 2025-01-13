@@ -1,0 +1,9 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "org.sabda.gpt",
+    "sha256_cert_fingerprints":
+    ["EF:D3:0D:8F:B6:B4:E8:2D:FC:62:D5:E9:47:38:8E:E8:3A:9E:87:88:FD:0F:35:2A:14:F0:A7:E9:84:9E:ED:10"]
+  }
+}]

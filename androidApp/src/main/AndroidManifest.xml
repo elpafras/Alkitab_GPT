@@ -7,7 +7,7 @@
         android:protectionLevel="normal" />
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <queries>
         <package android:name="org.sabda.alkitab" />
@@ -26,6 +26,9 @@
         android:theme="@style/Theme.AlkitabGPT"
         tools:targetApi="31">
         <activity
+            android:name=".ChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".QuestionAnswer"
             android:exported="false" />
 
@@ -40,14 +43,15 @@
             android:permission="org.sabda.gpt.PEDIA_BROADCAST_KEY">
             <intent-filter>
                 <action android:name="org.sabda.gpt.PEDIA_BROADCAST" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
 
         <activity
             android:name=".AlkitabGPT"
-            android:exported="true"
-            android:configChanges="orientation|screenSize|keyboardHidden"/>
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:exported="true" />
         <activity
             android:name=".Tentang"
             android:exported="false" />
@@ -62,20 +66,22 @@
             android:exported="false" />
         <activity
             android:name=".SplashScreenActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="https" />
                 <data android:host="gpt.sabda.org" />
                 <data android:path="/apps/" />

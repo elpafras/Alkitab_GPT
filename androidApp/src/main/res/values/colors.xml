@@ -7,4 +7,7 @@
     <color name="grey">#cfd1d0</color>
     <color name="red">#FF0000</color>
     <color name="green">#1AE30B</color>
+
+    <color name="nav_active">#80BDBCBC</color>
+    <color name="night_nav_active">#4D4D4D</color>
 </resources>

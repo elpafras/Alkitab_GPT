@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+        <item
+            android:id="@+id/openai"
+            android:title="@string/app_name"/>
+        <item
+            android:id="@+id/chatgpt"
+            android:title="@string/wa_chatgpt"/>
+        <item
+            android:id="@+id/copilot"
+            android:title="@string/wa_copilot"/>
+        <item
+            android:id="@+id/meta"
+            android:title="@string/wa_meta"/>
+    </group>
+
+</menu>

@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Alkitab GPT</string>
+
+    <!-- TextView, Button, View Purpose -->
     <string name="deskripsi"><b>Alkitab GPT (Bible Man)</b> adalah teknologi AI yang dirancang untuk menjadi <b>alat</b>, <b>asisten</b>, <b>teman</b> dalam melakukan <b>studi Alkitab</b> bagi tubuh Kristus di Indonesia untuk mendapatkan pengalaman <u>studi Alkitab</u> yang fun, mendalam, bertanggung jawab, dan relevan.</string>
     <string name="alkitab_gpt">Seminar: Alkitab GPT</string>
     <string name="cobasekarang">Coba Sekarang</string>
@@ -25,10 +27,8 @@
         Aplikasi \"Alkitab GPT\" adalah aplikasi Android yang dikembangkan oleh Yayasan Lembaga SABDA (YLSA) sebagai teknologi yang memungkinkan pengguna untuk melakukan studi Alkitab dengan memanfaatkan teknologi AI.\n\nAlkitab GPT telah melalui proses pelatihan intensive dengan menggunakan ratusan dataset SABDA Bot, versi-versi Alkitab, dan sumber-sumber kekristenan lainnya agar Alkitab GPT memberikan hasil yang sesuai dengan konteks Alkitab dan tidak ambigu.
     </string>
     <string name="sabda_apps">:: SABDA Apps ::</string>
-    <string name="sabda_apps_link"><u>https://sabda.app</u></string>
     <string name="thx">Terima kasih kepada semua mitra/teman\n pelayanan yang terlibat</string>
     <string name="kotaksaran">:: Kontak untuk Saran/Komentar ::</string>
-    <string name="kotaksaran_link"><u>apps@sabda.org</u></string>
     <string name="tgbtg">To God be the Glory!</string>
     <string name="free">… freely ye have received,\n freely give. (Mat 10:8)</string>
     <string name="toast_offline">Maaf, aplikasi hanya bisa\n diakses secara <i>online</i>\n tolong sambungkan perangkat Anda dengan internet</string>
@@ -51,6 +51,23 @@
     <string name="alkitab_media">Media Alkitab</string>
     <string name="komunitas">Komunitas</string>
     <string name="ai4cg">AI-4-Church &amp; AI-4-GOD</string>
+    <string name="situs_ai">Situs: AI</string>
+    <string name="release_note">Release Notes</string>
+    <string name="message_release_notes">Alkitab GPT (2.2)\n- Penambahan Chatbox\n- Penambahan Materi di bagian Resources</string>
+    <string name="openai">OpenAI</string>
+    <string name="wa_chatgpt">WA: ChatGPT</string>
+    <string name="wa_copilot">WA: Copilot</string>
+    <string name="wa_meta">WA: Meta</string>
+    <string name="loading">Loading…</string>
+    <string name="history">History</string>
+    <string name="edit_text_for_chat">Edit Text for Chat</string>
+    <string name="test">test</string>
+
+    <!-- Links -->
+    <string name="kotaksaran_link"><u>apps@sabda.org</u></string>
+    <string name="sabda_apps_link"><u>https://sabda.app</u></string>
+
+    <!--Q&A-->
     <string name="question_and_answer"><![CDATA[Question & Answer]]></string>
     <string name="question1">T: Apa itu Alkitab GPT?</string>
     <string name="question2">T: Mengapa saya diarahkan ke ChatGPT di OpenAI saat mencoba mengakses Alkitab GPT?</string>
@@ -67,7 +84,7 @@
     <string name="question13">T: Apakah informasi Alkitab GPT ini bisa dibagikan kepada siapa pun?</string>
     <string name="question14">T: Bagaimana gereja/komunitas saya bisa mendapatkan pelatihan tentang penggunaan Alkitab GPT untuk belajar Alkitab?</string>
     <string name="question15">T: Apakah ke depannya Alkitab ini akan terus di-update?</string>
-    <string name="answer1">J: J: Alkitab GPT adalah teknologi AI yang dirancang khusus untuk membantu umat kristiani di Indonesia dalam studi Alkitab. Melalui Alkitab GPT, kita bisa mendapatkan pengalaman belajar yang menyenangkan, mendalam, bertanggung jawab, dan relevan.</string>
+    <string name="answer1">J: Alkitab GPT adalah teknologi AI yang dirancang khusus untuk membantu umat kristiani di Indonesia dalam studi Alkitab. Melalui Alkitab GPT, kita bisa mendapatkan pengalaman belajar yang menyenangkan, mendalam, bertanggung jawab, dan relevan.</string>
     <string name="answer2">J: Alkitab GPT beroperasi di platform ChatGPT OpenAI dan didukung oleh GPT Plus (GPT-4, GPT-4o, Dall-e 3), sehingga pengguna diarahkan ke platform tersebut untuk mengakses Alkitab GPT.</string>
     <string name="answer3">J: Alkitab GPT dirancang untuk memberikan jawaban yang selalu berorientasi pada Alkitab, dengan setiap prompt yang diberi grounding terlebih dahulu untuk memastikan jawaban sesuai dengan prinsip-prinsip Alkitab.</string>
     <string name="answer4">J: Alkitab GPT telah melalui proses pelatihan data yang intensif menggunakan berbagai dataset Alkitab, SABDA Bot, dan bahan-bahan kekristenan lainnya.</string>
@@ -82,8 +99,10 @@
     <string name="answer13">J: Tentu. Informasi ini dapat dibagikan kepada siapa pun supaya setiap anak Tuhan dapat menggunakannya sebagai salah satu referensi untuk studi Alkitab.</string>
     <string name="answer14">J: Silakan kontak Yayasan Lembaga SABDA melalui WA: 08812979100 atau email di ylsa@sabda.org .</string>
     <string name="answer15">J: Ya. Aplikasi ini akan terus di-update/dikembangkan oleh Yayasan Lembaga SABDA.</string>
-    <string name="situs_ai">Situs: AI</string>
-    <string name="release_note">Release Notes</string>
-    <string name="message_release_notes">Alkitab GPT (2.2)\n- Penambahan Chatbox\n- Penambahan Materi di bagian Resources</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="logo">logo</string>
+    <string name="home">Home</string>
+    <string name="ai">AI</string>
 
 </resources>

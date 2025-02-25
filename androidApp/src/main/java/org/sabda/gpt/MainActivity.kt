@@ -4,7 +4,9 @@ import android.content.ActivityNotFoundException
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
+import android.content.res.ColorStateList
+import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,7 +16,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.ExpandableListView
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
@@ -22,38 +23,52 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.core.view.GravityCompat
+import androidx.fragment.app.Fragment
 import org.sabda.gpt.adapter.CustomExpandableListAdapter
-import org.sabda.gpt.data.ExamplePrompt
-import org.sabda.gpt.data.ExpandableListData
-import org.sabda.gpt.utility.NetworkUtil.NetworkChangeCallback
+import org.sabda.gpt.data.local.ExamplePrompt
+import org.sabda.gpt.data.local.ExpandableListData
 import org.sabda.gpt.databinding.ActivityMainBinding
+import org.sabda.gpt.fragment.AIFragment
+import org.sabda.gpt.fragment.HomeFragment
 import org.sabda.gpt.utility.NetworkUtil
+import org.sabda.gpt.utility.NetworkUtil.NetworkChangeCallback
 import org.sabda.gpt.utility.ToastUtil
+import kotlin.and
 
 class MainActivity : AppCompatActivity(), NetworkChangeCallback {
 
     private lateinit var binding: ActivityMainBinding
-    private var examplePrompt: ExamplePrompt? = null
+    private lateinit var examplePrompt: ExamplePrompt
     private var isDrawer: Boolean = false
-    private var isConnected: Boolean = false
-    private var randomPrompt: String? = null
-    var maxCharCount: Int = 250
+
+    private lateinit var randomPrompt: String
+
 
     private var customExpandableListAdapter: CustomExpandableListAdapter? = null
     private var listDataHeader: MutableList<String>? = null
     private var listDataChild: HashMap<String, MutableList<String>>? = null
+    private var isConnected: Boolean = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragmentFrame, HomeFragment())
+                .commit()
+        }
+
         initializeUI()
         initializeExpandableListView()
         initializeListeners()
         initializeNetwork()
         setInitialInput()
+        setupNavBottom()
         handleIntent(intent)
 
         val callback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
@@ -85,63 +100,81 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
     }
 
     private fun handleIntent(intent: Intent) {
-        val inputPedia = intent.getStringExtra("inputPedia")
-        val topic = intent.getStringExtra("topic")
-        val lastBookName = intent.getStringExtra("lastBookName")
-        val lastChapter = intent.getIntExtra("lastChapter", 1)
+        intent.getStringExtra("inputPedia")?.let {
+           TODO()
+        } ?: intent.getStringExtra("topic")?.let {
+            val topic = it
+            val lastBookName = intent.getStringExtra("lastBookName") ?: ""
+            val lastChapter = intent.getIntExtra("lastChapter", 1)
 
-        if (inputPedia != null || topic != null) {
-            binding.input.setText("")
+            val textToSet = buildString {
+                append("$topic ")
+                append("$lastBookName $lastChapter".trim())
+            }.trim()
+            TODO()
+        }
 
-            if (inputPedia != null) {
-                binding.input.setText(inputPedia)
-            } else if (topic != null) {
-                val formattedText = String.format("%s %s %s", topic, lastBookName, lastChapter)
-                binding.input.setText(formattedText.trim { it <= ' ' })
-            }
-
-            val alkitabGPTIntent = Intent(this, AlkitabGPT::class.java)
-            alkitabGPTIntent.putExtras(intent.extras!!)
-            startActivity(alkitabGPTIntent)
+        intent.extras?.let {
+            startActivity(Intent(this, AlkitabGPT::class.java).apply {
+                putExtras(it)
+            })
         }
     }
 
     private fun initializeExpandableListView() {
         prepareListData()
-        customExpandableListAdapter =
-            listDataChild?.let { listDataHeader?.let { it1 ->
-                CustomExpandableListAdapter(this,
-                    it1, it)
-            } }
-        binding.expandableListView.setAdapter(customExpandableListAdapter)
+        customExpandableListAdapter = listDataHeader?.let { headers ->
+            listDataChild?.let { children ->
+                CustomExpandableListAdapter(this, headers, children).also {
+                    binding.expandableListView.setAdapter(it)
+                }
+            }
+        }
 
-        binding.expandableListView.setOnChildClickListener { _: ExpandableListView?, _: View?, groupPosition: Int, childPosition: Int, _: Long ->
-            val selectedChild =
-                listDataChild!![listDataHeader!![groupPosition]]!![childPosition]
-            Log.d("MainActChild", "initializeExpandableListView: $selectedChild")
-            handleChildClick(selectedChild)
+        binding.expandableListView.setOnChildClickListener { _, _, groupPosition, childPosition, _ ->
+            listDataChild?.get(listDataHeader?.get(groupPosition))?.get(childPosition)?.let {
+                Log.d("MainActivity", "Selected: $it")
+                handleChildClick(it)
+            }
             true
         }
 
-        binding.expandableListView.expandGroup(0)
-        binding.expandableListView.expandGroup(1)
-        binding.expandableListView.expandGroup(2)
+        repeat(listDataHeader?.size ?: 0) {
+            binding.expandableListView.expandGroup(it)
+        }
     }
 
     private fun initializeListeners() {
         binding.apply {
             dots.setOnClickListener { showPopUp(it) }
             drawer.setOnClickListener { toggleDrawer() }
-            input.addTextChangedListener(InputTextWatcher())
-            input.setOnKeyListener { _: View, keyCode: Int, event: KeyEvent -> handleEnterKey(keyCode, event) }
-            input.setOnEditorActionListener { _: TextView, actionId: Int, _: KeyEvent -> handleEditorAction(actionId) }
-            send.setOnClickListener { handleSendButtonClick() }
-            alkitabGPT.setOnClickListener { handleClick("https://chatgpt.com/g/g-QjHkF2IEk-alkitab-gpt-bible-man") }
-            situsAlkitabGpt.setText(R.string.situs)
-            situsAlkitabGpt.setOnClickListener { handleClick2("https://gpt.sabda.org/","Situs: Alkitab GPT") }
-            situsAi.setOnClickListener { handleClick2("https://ai.sabda.org/","Situs: AI-Sabda") }
-            lebihlanjut.setOnClickListener { startActivity(Intent(this@MainActivity, Selengkapnya::class.java)) }
         }
+    }
+
+    private fun setupNavBottom() {
+        binding.navBottom?.setOnItemSelectedListener { item: MenuItem ->
+            val fragment: Fragment = when (item.itemId) {
+                R.id.home -> HomeFragment()
+                R.id.ai -> AIFragment()
+                else -> return@setOnItemSelectedListener false
+            }
+
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragmentFrame, fragment)
+                .commit()
+
+            true
+        }
+
+        binding.navBottom?.itemIconTintList = ColorStateList.valueOf(Color.WHITE)
+        binding.navBottom?.itemTextColor = ColorStateList.valueOf(Color.WHITE)
+
+        val isNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+
+        val activeColor = ContextCompat.getColor(
+            this, if (isNightMode) R.color.night_nav_active else R.color.nav_active
+        )
+        binding.navBottom?.itemActiveIndicatorColor = ColorStateList.valueOf(activeColor)
     }
 
     private fun initializeNetwork() {
@@ -157,57 +190,20 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
 
     private fun setInitialInput() {
         examplePrompt = ExamplePrompt()
-        randomPrompt = examplePrompt!!.getRandomPrompt()
-        binding.input.setText(randomPrompt)
-        updateCharCount(binding.input.length())
+        randomPrompt = examplePrompt.getRandomPrompt()
     }
 
     private fun handleChildClick(selectedChild: String) {
         when (selectedChild) {
-            "Studi Alkitab" -> {
-                Log.d("TAG", "handleChildClicked")
-                handleClick2("https://alkitab.sabda.org", "Situs: Studi Alkitab")
-            }
-
-            "Media Alkitab" -> {
-                Log.d("TAG", "handleChildClicked")
-                handleClick2("https://sabda.id/badeno/", "Situs: Media Alkitab")
-            }
-
-            "Alkitab" -> {
-                Log.d("TAG", "handleChildClicked")
-                openApps("org.sabda.alkitab.action.VIEW", "org.sabda.alkitab")
-            }
-
-            "AlkiPEDIA" -> {
-                Log.d("TAG", "handleChildClicked")
-                openApps("org.sabda.pedia.action.VIEW", "org.sabda.pedia")
-            }
-
-            "Tafsiran" -> {
-                Log.d("TAG", "handleChildClicked")
-                openApps("org.sabda.tafsiran.action.VIEW", "org.sabda.tafsiran")
-            }
-
-            "Kamus Alkitab" -> {
-                Log.d("TAG", "handleChildClicked")
-                openApps("org.sabda.kamus.action.VIEW", "org.sabda.kamus")
-            }
-
-            "Sabda Bot" -> {
-                Log.d("TAG", "handleChildClicked")
-                handleClick("https://t.me/sabdabot")
-            }
-
-            "Lain-lain" -> {
-                Log.d("TAG", "handleChildClicked")
-                handleClick("https://play.google.com/store/apps/dev?id=4791022353258811724&hl=id")
-            }
-
-            "AI-4-Church & AI-4-GOD" -> {
-                Log.d("TAG", "handleChildClicked")
-                handleClick("https://chat.whatsapp.com/EkBAirjrEKK4wa31yqQb6b")
-            }
+            "Studi Alkitab" -> { openUrl("https://alkitab.sabda.org", "Situs: Studi Alkitab") }
+            "Media Alkitab" -> { openUrl("https://sabda.id/badeno/", "Situs: Media Alkitab") }
+            "Alkitab" -> { openApps("org.sabda.alkitab.action.VIEW", "org.sabda.alkitab") }
+            "AlkiPEDIA" -> { openApps("org.sabda.pedia.action.VIEW", "org.sabda.pedia") }
+            "Tafsiran" -> { openApps("org.sabda.tafsiran.action.VIEW", "org.sabda.tafsiran") }
+            "Kamus Alkitab" -> { openApps("org.sabda.kamus.action.VIEW", "org.sabda.kamus") }
+            "Sabda Bot" -> { openUrl("https://t.me/sabdabot") }
+            "Lain-lain" -> { openUrl("https://play.google.com/store/apps/dev?id=4791022353258811724&hl=id") }
+            "AI-4-Church & AI-4-GOD" -> { openUrl("https://chat.whatsapp.com/EkBAirjrEKK4wa31yqQb6b") }
         }
     }
 
@@ -219,87 +215,29 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
         }
     }
 
-    private fun handleEnterKey(keyCode: Int, event: KeyEvent): Boolean {
-        if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
-            handleSendInput()
-            return true
-        }
-        return false
-    }
-
-    private fun handleEditorAction(actionId: Int): Boolean {
-        if (actionId == EditorInfo.IME_ACTION_SEND) {
-            handleSendInput()
-            return true
-        }
-        return false
-    }
-
-    private fun handleSendButtonClick() {
-        val inputText = binding.input.text.toString()
-        val length = inputText.length
-
-        if (length < 5) {
-            Toast.makeText(
-                this@MainActivity,
-                "Masukkan prompt dengan panjang minimal 5 karakter",
-                Toast.LENGTH_SHORT
-            ).show()
-        } else if (length > maxCharCount) {
-            Toast.makeText(
-                this@MainActivity,
-                "Masukkan prompt dengan panjang maksimal 250 karakter",
-                Toast.LENGTH_SHORT
-            ).show()
-        } else {
-            if (isConnected) {
-                val intent = Intent(this@MainActivity, AlkitabGPT::class.java)
-                intent.putExtra("inputtext", inputText)
-                startActivity(intent)
-                binding.input.setText("")
-            } else {
-                ToastUtil.showToast(this)
-            }
-        }
-    }
-
-    private fun handleSendInput() {
-        val inputText = binding.input.text.toString()
-        handleClick("https://gpt.sabda.org/chat.php?t=$inputText")
-        binding.input.setText("")
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun prepareListData() {
         listDataHeader = ArrayList()
         listDataChild = HashMap()
 
-        (listDataHeader as ArrayList<String>).add(getString(R.string.situs2))
-        (listDataHeader as ArrayList<String>).add(getString(R.string.aplikasi_5))
-        (listDataHeader as ArrayList<String>).add(getString(R.string.komunitas))
+        // Header List
+        val headers = listOf(R.string.situs2, R.string.aplikasi_5, R.string.komunitas)
+        val listDataHeader = headers.map { getString(it) }.also { (listDataHeader as ArrayList<String>).addAll(it) }
 
-        val listGroup1 = listOf(
-            getString(R.string.studi_alkitab),
-            getString(R.string.alkitab_media)
-        )
+        // Child Lists
+        val childItems = listOf(
+            listOf(R.string.studi_alkitab, R.string.alkitab_media),
+            listOf(R.string.alkitab, R.string.alkipedia, R.string.tafsiran, R.string.kamus_alkitab, R.string.bot, R.string.lain),
+            listOf(R.string.ai4cg)
+        ).map { group -> group.map { getString(it) } }
 
-        val listGroup2 = listOf(
-            getString(R.string.alkitab),
-            getString(R.string.alkipedia),
-            getString(R.string.tafsiran),
-            getString(R.string.kamus_alkitab),
-            getString(R.string.bot),
-            getString(R.string.lain)
-        )
-
-        val listGroup3 = listOf(
-            getString(R.string.ai4cg)
-        )
-
-
-        listDataChild!![(listDataHeader as ArrayList<String>)[0]] = listGroup1.toMutableList()
-        listDataChild!![(listDataHeader as ArrayList<String>)[1]] = listGroup2.toMutableList()
-        listDataChild!![(listDataHeader as ArrayList<String>)[2]] = listGroup3.toMutableList()
-
+        // Mapping Headers to Child Lists
+        listDataHeader.forEachIndexed { index, header ->
+            listDataChild!![header] = childItems[index].toMutableList()
+        }
     }
 
     private fun showPopUp(v: View) {
@@ -310,7 +248,7 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
             val itemId = item.itemId
             when (itemId) {
                 R.id.AlkitabGPT -> {
-                    handleClick("https://chatgpt.com/g/g-QjHkF2IEk-alkitab-gpt-bible-man")
+                    openUrl("https://chatgpt.com/g/g-QjHkF2IEk-alkitab-gpt-bible-man")
                 }
                 R.id.pelajari -> {
                     startActivity(Intent(this@MainActivity, Selengkapnya::class.java))
@@ -349,32 +287,16 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
         )
     }
 
-    private fun handleClick(url: String) {
+    private fun openUrl(url: String, title: String? = null) {
         if (isConnected) {
-            NetworkUtil.openUrl(this, url)
+            title?.let { NetworkUtil.openWebView(this, url, it) } ?: NetworkUtil.openUrl(this, url)
         } else {
             ToastUtil.showToast(this)
         }
-    }
-
-    private fun handleClick2(url: String, title: String) {
-        if (isConnected) {
-            NetworkUtil.openWebView(this, url, title)
-        } else {
-            ToastUtil.showToast(this)
-        }
-    }
-
-    private fun updateCharCount(length: Int) {
-        val remaining = maxCharCount - length
-        binding.characterCount.text = getString(R.string.cc, remaining)
     }
 
     private fun updateConnectionStatus(isConnected: Boolean) {
         this.isConnected = isConnected
-        binding.send.isEnabled = isConnected
-        binding.alkitabGPT.isEnabled = isConnected
-        binding.situsAlkitabGpt.isEnabled = isConnected
 
         if (!isConnected) {
             ToastUtil.showToast(this)
@@ -389,7 +311,7 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
             //intent.setPackage(packageName);
             try {
                 startActivity(intent)
-            } catch (e: ActivityNotFoundException) {
+            } catch (_: ActivityNotFoundException) {
                 redirectToPlayStore(packageName)
             }
         } else {
@@ -399,7 +321,7 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
     }
 
     private fun redirectToPlayStore(packageName: String) {
-        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName")))
+        startActivity(Intent(Intent.ACTION_VIEW, "market://details?id=$packageName".toUri()))
     }
 
     private fun isAppInstalled(packageName: String): Boolean {
@@ -407,23 +329,9 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
         try {
             pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES)
             return true
-        } catch (e: PackageManager.NameNotFoundException) {
+        } catch (_: PackageManager.NameNotFoundException) {
             return false
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        binding.input.requestFocus()
-        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(binding.input, InputMethodManager.SHOW_IMPLICIT)
-
-        //clearDrawerSelection();
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        finish()
     }
 
     override fun onDestroy() {
@@ -431,21 +339,7 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
         NetworkUtil.unregisterNetworkChangeReceiver(this)
     }
 
-    private inner class InputTextWatcher : TextWatcher {
-        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
 
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-            val length = s.length
-            updateCharCount(length)
-
-            if (length > maxCharCount) {
-                binding.input.setText(s.subSequence(0, maxCharCount))
-                binding.input.setSelection(maxCharCount)
-            }
-        }
-
-        override fun afterTextChanged(s: Editable) {}
-    }
 
     override fun onNetworkChange(isConnected: Boolean) {
         updateConnectionStatus(isConnected)

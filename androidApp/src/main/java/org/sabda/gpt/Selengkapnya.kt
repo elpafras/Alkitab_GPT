@@ -110,7 +110,8 @@ class Selengkapnya : AppCompatActivity(), NetworkChangeCallback {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.image_dialog)
-        Objects.requireNonNull(dialog.window)?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        Objects.requireNonNull(dialog.window)
+            ?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
 
         val photoView = dialog.findViewById<PhotoView>(R.id.photoView)
         photoView.setImageResource(imageResId)

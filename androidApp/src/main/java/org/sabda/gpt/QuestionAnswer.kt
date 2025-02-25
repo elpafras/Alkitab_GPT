@@ -1,7 +1,6 @@
 package org.sabda.gpt
 
 import android.content.ContentValues
-import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.widget.ExpandableListView
@@ -88,7 +87,7 @@ class QuestionAnswer : AppCompatActivity() {
     }
 
     private fun createStringResourcesList(prefix: String, count: Int): List<String> {
-        return (1..count).map { index -> getString(resources.getIdentifier("${prefix}${index}", "string", packageName)) }
+        return (1..count).map { index -> getString(resources.getIdentifier("$prefix$index", "string", packageName)) }
     }
 
     private fun initializeNetwork() {

@@ -1,4 +1,4 @@
-package org.sabda.gpt.data
+package org.sabda.gpt.data.local
 
 import android.content.Context
 import org.sabda.gpt.R

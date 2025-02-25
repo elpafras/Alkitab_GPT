@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.devtools.ksp' version '2.1.0-1.0.29'
 }
 
 android {
@@ -9,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "org.sabda.gpt"
-        minSdk 23
+        minSdk 24
         targetSdk 35
         versionCode 7
         versionName "2.2"
@@ -48,10 +49,14 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.15.0'
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.1'
     implementation 'com.android.support:support-compat:28.0.0'
-    implementation 'androidx.activity:activity-ktx:1.9.3'
+    implementation 'androidx.activity:activity-ktx:1.10.0'
     implementation 'com.airbnb.android:lottie:6.4.0'
     implementation 'androidx.core:core-ktx:1.15.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:2.1.0"
+    implementation 'androidx.activity:activity-ktx:1.10.0'
+    implementation "androidx.room:room-runtime:2.6.1"
+    implementation "androidx.room:room-ktx:2.6.1"
+    ksp "androidx.room:room-compiler:2.6.1"
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'

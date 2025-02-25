@@ -9,41 +9,50 @@ import org.sabda.gpt.utility.NetworkUtil.NetworkChangeCallback
 import org.sabda.gpt.utility.ToastUtil
 
 class Tentang : AppCompatActivity(), NetworkChangeCallback {
-    private var back: ImageView? = null
-    var version: TextView? = null
-    private var sabdaLink: TextView? = null
-    private var kotakSaranLink: TextView? = null
+
+    private lateinit var back: ImageView
+    private lateinit var version: TextView
+    private lateinit var sabdaLink: TextView
+    private lateinit var kotakSaranLink: TextView
     private var isConnected: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tentang)
 
-        isConnected = NetworkUtil.isNetworkAvailable(this)
+        initViews()
+        setupListener()
+        registerNetworkCallback()
+    }
+
+    private fun initViews() {
         back = findViewById(R.id.back)
         version = findViewById(R.id.version)
         sabdaLink = findViewById(R.id.sabdaLink)
         kotakSaranLink = findViewById(R.id.kotakSaranLink)
 
+        isConnected = NetworkUtil.isNetworkAvailable(this)
         updateConnectionStatus(isConnected)
+        version.text = "Versi: 2.2"
+    }
 
-        NetworkUtil.registerNetworkChangeReceiver(
-            this
-        ) { isConnected: Boolean -> this.updateConnectionStatus(isConnected) }
+    private fun setupListener() {
+        back.setOnClickListener { finish() }
 
-        back!!.setOnClickListener { finish() }
+        sabdaLink.setOnClickListener { handleClick("https://sabda.app") }
+        kotakSaranLink.setOnClickListener { handleClick("mailto:apps@sabda.org") }
+    }
 
-        version!!.text = "Versi: 2.2"
-
-        sabdaLink!!.setOnClickListener { handleClick("https://sabda.app") }
-
-        kotakSaranLink!!.setOnClickListener { handleClick("mailto:apps@sabda.org") }
+    private fun registerNetworkCallback() {
+        NetworkUtil.registerNetworkChangeReceiver(this) { isConnected ->
+            updateConnectionStatus(isConnected)
+        }
     }
 
     private fun updateConnectionStatus(isConnected: Boolean) {
         this.isConnected = isConnected
-        sabdaLink!!.isEnabled = isConnected
-        kotakSaranLink!!.isEnabled = isConnected
+        sabdaLink.isEnabled = isConnected
+        kotakSaranLink.isEnabled = isConnected
 
         if (!isConnected) {
             ToastUtil.showToast(this)

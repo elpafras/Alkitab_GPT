@@ -4,11 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import androidx.core.net.toUri
 
 object WebUtils {
     fun openUrl(context: Context, url: String) {
         if (NetworkUtil.isNetworkAvailable(context)) {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            val intent = Intent(Intent.ACTION_VIEW, url.toUri())
             context.startActivity(intent)
         } else {
             showToast(context, "No internet connection")

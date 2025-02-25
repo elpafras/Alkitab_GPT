@@ -102,6 +102,14 @@
                             android:layout_toEndOf="@id/input"
                             android:layout_centerVertical="true"/>
 
+                        <ImageView
+                            android:id="@+id/option"
+                            android:layout_width="30dp"
+                            android:layout_height="50dp"
+                            android:src="@drawable/baseline_keyboard_arrow_down_24"
+                            android:layout_toEndOf="@id/characterCount"
+                            android:layout_centerVertical="true"/>
+
                         <ImageButton
                             android:id="@+id/send"
                             android:layout_width="wrap_content"
@@ -109,11 +117,19 @@
                             android:backgroundTint="#082147"
                             android:contentDescription="@string/send"
                             android:src="@drawable/arrow_send"
-                            android:layout_toEndOf="@id/characterCount"
-                            android:layout_marginStart="10dp"
+                            android:layout_toEndOf="@id/option"
                             android:layout_centerVertical="true"/>
 
                     </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/source"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_name"
+                        android:textColor="@color/black"
+                        android:layout_gravity="center_horizontal"/>
+
 
                     <View
                         android:id="@+id/view"

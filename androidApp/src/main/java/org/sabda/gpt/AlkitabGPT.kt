@@ -4,149 +4,102 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import org.sabda.gpt.databinding.ActivityAlkitabGptBinding
 import org.sabda.gpt.utility.NetworkUtil
 import org.sabda.gpt.utility.NetworkUtil.NetworkChangeCallback
 import org.sabda.gpt.utility.ToastUtil
 
 class AlkitabGPT : AppCompatActivity(), NetworkChangeCallback {
-    private var back: ImageView? = null
-    private var webView: WebView? = null
+    private lateinit var binding: ActivityAlkitabGptBinding
+    private val loadingText by lazy {
+        TextView(this).apply {
+            text = getString(R.string.loading)
+            textSize = 20f
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                Gravity.CENTER
+            )
+            binding.root.addView(this)
+        }
+    }
 
     /* From Alkitab GPT*/
-    private var inputText: String? = null
-    private var inputTitle: String? = null
-    private var inputUrl: String? = null
-    var title: TextView? = null
-    var loadingText: TextView? = null
+    private val inputText by lazy { intent.getStringExtra("inputtext").orEmpty() }
+    private val inputUrl by lazy { intent.getStringExtra("url").orEmpty() }
 
     /* From Alkitab GPT*/ /* From Alkipedia*/
-    private var inputPedia: String? = null
-    private var inputPediaTopics: String? = null
-    private var lastBookName: String? = null
-    private var lastChapter: Int = 0
+    private val inputPedia by lazy { intent.getStringExtra("inputPedia").orEmpty() }
+    private val inputPediaTopics by lazy { intent.getStringExtra("topic").orEmpty() }
+    private val lastBookName by lazy { intent.getStringExtra("lastBookName").orEmpty() }
+    private val lastChapter by lazy { intent.getIntExtra("lastChapter", 1) }
 
     /* From Alkipedia */
     private var isConnected: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_alkitab_gpt)
+        binding = ActivityAlkitabGptBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initializeView()
         initializeWebViewSetting()
 
         isConnected = NetworkUtil.isNetworkAvailable(this)
 
-        if (savedInstanceState != null) {
-            webView!!.restoreState(savedInstanceState)
-        } else {
-            loadWebView()
-        }
-        NetworkUtil.registerNetworkChangeReceiver(
-            this
-        ) { isConnected: Boolean -> this.updateConnectionStatus(isConnected) }
-    }
+        savedInstanceState?.let { binding.alkitabGPTWebView.restoreState(it) } ?: loadWebView()
 
-    private fun loadWebView() {
-        if (inputText != null) {
-            webView!!.loadUrl("https://gpt.sabda.org/chat.php?t=$inputText")
-        } else if (inputPedia != null && lastBookName != null && lastChapter != -1) {
-            val lCp = lastChapter.toString()
-            webView!!.loadUrl("https://gpt.sabda.org/chat.php?p=$lastBookName $lCp&t=$inputPedia")
-        } else if (inputPediaTopics != null && lastBookName != null && lastChapter != -1) {
-            val lCp = lastChapter.toString()
-            webView!!.loadUrl("https://gpt.sabda.org/chat.php?p=$lastBookName $lCp&d=$inputPediaTopics")
-        } else {
-            webView!!.loadUrl(inputUrl!!)
-        }
+        NetworkUtil.registerNetworkChangeReceiver(this, ::updateConnectionStatus)
     }
 
     private fun initializeView() {
-        back = findViewById(R.id.out)
-        webView = findViewById(R.id.alkitabGPTWebView)
-        title = findViewById(R.id.title)
-        loadingText = createLoadingText()
-
-        inputText = intent.getStringExtra("inputtext")
-        inputTitle = intent.getStringExtra("title")
-        inputUrl = intent.getStringExtra("url")
-        inputPedia = intent.getStringExtra("inputPedia")
-        inputPediaTopics = intent.getStringExtra("topic")
-        lastBookName = intent.getStringExtra("lastBookName")
-        lastChapter = intent.getIntExtra("lastChapter", 1)
-
-        setTitletext()
-        setupButton()
+        binding.title.text = intent.getStringExtra("title") ?: getString(R.string.app_name)
+        binding.out.setOnClickListener { finish() }
     }
 
     private fun initializeWebViewSetting() {
-        val webSettings = webView!!.settings
-        webSettings.javaScriptEnabled = true
-        webSettings.domStorageEnabled = true
-        webSettings.javaScriptCanOpenWindowsAutomatically = true
-        /*webSettings.allowFileAccessFromFileURLs = true
-        webSettings.allowUniversalAccessFromFileURLs = true*/
-
-        webView!!.webViewClient = CustomizeWebViewClient()
-        webView!!.webChromeClient = WebChromeClient()
-    }
-
-
-    private fun createLoadingText(): TextView {
-        loadingText = TextView(this)
-        loadingText!!.text = "Loading..."
-        loadingText!!.textSize = 20f
-
-        val params = FrameLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            Gravity.CENTER
-        )
-
-        loadingText!!.layoutParams = params
-
-        val root = findViewById<ViewGroup>(android.R.id.content)
-        root.addView(loadingText)
-
-        return loadingText as TextView
-    }
-
-    private fun setTitletext() {
-        if (inputTitle != null) {
-            title!!.text = inputTitle
-        } else {
-            title!!.setText(R.string.app_name)
+        with(binding.alkitabGPTWebView.settings) {
+            javaScriptEnabled = true
+            domStorageEnabled = true
+            javaScriptCanOpenWindowsAutomatically = true
         }
+
+        binding.alkitabGPTWebView.webViewClient = CustomizeWebViewClient()
+        binding.alkitabGPTWebView.webChromeClient = WebChromeClient()
     }
 
-    private fun setupButton() {
-        back!!.setOnClickListener { v: View? -> finish() }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        webView!!.saveState(outState)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        webView!!.restoreState(savedInstanceState)
+    private fun loadWebView() {
+        val url = when {
+            inputText.isNotEmpty() -> "https://gpt.sabda.org/chat.php?t=$inputText"
+            inputPedia.isNotEmpty() && lastBookName.isNotEmpty() && lastChapter != -1 ->
+                "https://gpt.sabda.org/chat.php?p=$lastBookName $lastChapter&t=$inputPedia"
+            inputPediaTopics.isNotEmpty() && lastBookName.isNotEmpty() && lastChapter != -1 ->
+                "https://gpt.sabda.org/chat.php?p=$lastBookName $lastChapter&d=$inputPediaTopics"
+            inputUrl.isNotEmpty() -> inputUrl
+            else -> return
+        }
+        binding.alkitabGPTWebView.loadUrl(url)
     }
 
     private fun updateConnectionStatus(isConnected: Boolean) {
         this.isConnected = isConnected
+        if (!isConnected) ToastUtil.showToast(this)
+    }
 
-        if (!isConnected) {
-            ToastUtil.showToast(this)
-        }
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        binding.alkitabGPTWebView.saveState(outState)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        binding.alkitabGPTWebView.restoreState(savedInstanceState)
     }
 
     override fun onDestroy() {
@@ -154,20 +107,19 @@ class AlkitabGPT : AppCompatActivity(), NetworkChangeCallback {
         NetworkUtil.unregisterNetworkChangeReceiver(this)
     }
 
-
     override fun onNetworkChange(isConnected: Boolean) {
         updateConnectionStatus(isConnected)
     }
 
     private inner class CustomizeWebViewClient : WebViewClient() {
-        override fun onPageStarted(view: WebView, url: String, favicon: Bitmap) {
+        override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)
-            loadingText!!.visibility = View.VISIBLE
+            loadingText.visibility = View.VISIBLE
         }
 
         override fun onPageFinished(view: WebView, url: String) {
             super.onPageFinished(view, url)
-            loadingText!!.visibility = View.GONE
+            loadingText.visibility = View.GONE
         }
     }
 }

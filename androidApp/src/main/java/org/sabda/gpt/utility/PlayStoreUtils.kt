@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 
 object PlayStoreUtils {
     fun openApps (context: Context, destination: String, packageName: String) {
@@ -22,7 +23,7 @@ object PlayStoreUtils {
 
     private fun redirectToPlayStore(context: Context, packageName: String) {
         val playStoreUri = "market://details?id=$packageName"
-        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(playStoreUri)))
+        context.startActivity(Intent(Intent.ACTION_VIEW, playStoreUri.toUri()))
     }
 
     private fun isAppInstalled(context: Context, packageName: String): Boolean{

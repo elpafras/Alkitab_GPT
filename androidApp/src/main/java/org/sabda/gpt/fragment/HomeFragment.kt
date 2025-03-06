@@ -120,7 +120,7 @@ class HomeFragment : Fragment() {
             when (item.itemId) {
                 R.id.openai -> {
                     selectedOption = ""
-                    binding.source.text = getString(R.string.app_name)
+                    binding.source.text = "ChatGPT"
                 }
                 R.id.chatgpt -> {
                     selectedOption = "/wa/openai.php"

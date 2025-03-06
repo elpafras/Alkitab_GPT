@@ -1,5 +1,6 @@
 package org.sabda.gpt.utility
 
+import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -7,6 +8,7 @@ import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
+import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
 import org.sabda.gpt.AlkitabGPT
 
@@ -30,6 +32,23 @@ object NetworkUtil {
                         capabilities.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH))
         Log.d("network_debug_2", "isNetworkAvailable: $isConnected")
         return isConnected
+    }
+
+    fun showNoInternetDialog(context: Context) {
+        AlertDialog.Builder(context)
+            .setTitle("Masalah Koneksi Internet")
+            .setMessage("Silakan sambungkan perangkat dengan internet untuk memulai aplikasi ini")
+            .setCancelable(false)
+            .setPositiveButton("OK") { dialog, _ ->
+                if (!isNetworkAvailable(context)) {
+                    if (context is Activity) {
+                        context.finishAffinity()
+                    }
+                } else {
+                    dialog.dismiss()
+                }
+            }
+            .show()
     }
 
     fun registerNetworkChangeReceiver(context: Context, callback: (Boolean) -> Unit) {

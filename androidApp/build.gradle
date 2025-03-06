@@ -26,7 +26,7 @@ android {
     }
 
     viewBinding {
-        enable = true
+        enabled = true
     }
 
     compileOptions {

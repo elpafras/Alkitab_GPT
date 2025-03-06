@@ -7,6 +7,10 @@
     <color name="grey">#cfd1d0</color>
     <color name="red">#FF0000</color>
     <color name="green">#1AE30B</color>
+    <color name="gray_dark_background">#121212</color>
+    <color name="white_dark_tc">#D3D3D3</color>
+    <color name="gray_dark_toolbar">#1F1F1F</color>
+    <color name="gray_dark_button">#2B2D30</color>
 
     <color name="nav_active">#80BDBCBC</color>
     <color name="night_nav_active">#4D4D4D</color>

@@ -10,7 +10,7 @@ import java.net.URL
 
 class ChatRepository {
     suspend fun fetchChatResponse(message: String): String? {
-        val urlString = "https://dev.sabda.org/unhack/2024/api/chatbot/getChatbot.php?chat="
+        val urlString = "https://dev.sabda.org/bibleai/api/chatbot/getChatbot.php?chat="
 
         return withContext(Dispatchers.IO) {
             try {
@@ -41,4 +41,5 @@ class ChatRepository {
         val cleanText = Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY).toString()
         return cleanText.replace(Regex("\\s+"), " ").trim()
     }
+
 }

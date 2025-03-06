@@ -8,16 +8,15 @@ import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
-import android.view.KeyEvent
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
 import android.widget.PopupMenu
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
@@ -35,7 +34,7 @@ import org.sabda.gpt.fragment.HomeFragment
 import org.sabda.gpt.utility.NetworkUtil
 import org.sabda.gpt.utility.NetworkUtil.NetworkChangeCallback
 import org.sabda.gpt.utility.ToastUtil
-import kotlin.and
+import org.sabda.gpt.utility.MenuUtil
 
 class MainActivity : AppCompatActivity(), NetworkChangeCallback {
 
@@ -51,11 +50,31 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
     private var listDataChild: HashMap<String, MutableList<String>>? = null
     private var isConnected: Boolean = false
 
+    private val inactivityTimeout = 3000L // 3 detik
+    private val handler = Handler(Looper.getMainLooper())
+    private val hideFloatingButtonRunnable = Runnable {
+        binding.floatingChatButton.animate()
+            .alpha(0f)
+            .setDuration(500)
+            .setInterpolator(AccelerateInterpolator())
+            .withEndAction { binding.floatingChatButton.visibility = View.GONE }
+            .start()
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.root.post {
+            if (savedInstanceState == null) {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentFrame, HomeFragment())
+                    .commit()
+                supportFragmentManager.executePendingTransactions()
+            }
+        }
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
@@ -70,6 +89,7 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
         setInitialInput()
         setupNavBottom()
         handleIntent(intent)
+        setupButtons()
 
         val callback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -96,6 +116,31 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
                 handleChildClick(selectedChild)
             }
             true
+        }
+    }
+
+    override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
+        resetInactivityTimer() // Setiap ada sentuhan, reset timer
+        return super.dispatchTouchEvent(event)
+    }
+
+    private fun resetInactivityTimer() {
+        handler.removeCallbacks(hideFloatingButtonRunnable)
+        binding.floatingChatButton.visibility = View.VISIBLE
+        binding.floatingChatButton.animate()
+            .alpha(1f)
+            .setDuration(500)
+            .setInterpolator(DecelerateInterpolator())
+            .start()
+        handler.postDelayed(hideFloatingButtonRunnable, inactivityTimeout)
+    }
+
+    private fun setupButtons() {
+        binding.floatingChatButton.setOnClickListener {
+            val intent = Intent(this@MainActivity, ChatActivity::class.java).apply {
+                putExtra("START_NEW_CHAT", true)
+            }
+            startActivity(intent)
         }
     }
 
@@ -337,9 +382,8 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
     override fun onDestroy() {
         super.onDestroy()
         NetworkUtil.unregisterNetworkChangeReceiver(this)
+        handler.removeCallbacks(hideFloatingButtonRunnable)
     }
-
-
 
     override fun onNetworkChange(isConnected: Boolean) {
         updateConnectionStatus(isConnected)

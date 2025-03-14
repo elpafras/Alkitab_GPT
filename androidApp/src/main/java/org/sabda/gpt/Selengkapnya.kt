@@ -101,9 +101,9 @@ class Selengkapnya : AppCompatActivity(), NetworkChangeCallback {
             binding.pdfBibleGpt to "j402m0w1jgBb9m"
         )
 
-        pdfButtonMap.forEach { (button, url) ->
-            button.setOnClickListener { handlePdfClick("https://www.slideshare.net/slideshow/embed_code/key/$url") }
-        }
+//        pdfButtonMap.forEach { (button, url) ->
+//            button.setOnClickListener { handlePdfClick("https://www.slideshare.net/slideshow/embed_code/key/${url}") }
+//        }
     }
 
     private fun showImage(imageResId: Int) {
@@ -129,7 +129,7 @@ class Selengkapnya : AppCompatActivity(), NetworkChangeCallback {
         if (isConnected) {
             NetworkUtil.openWebView(this, url, title)
         } else {
-            ToastUtil.showToast(this)
+            ToastUtil.showToast(this,"")
         }
     }
 
@@ -137,7 +137,7 @@ class Selengkapnya : AppCompatActivity(), NetworkChangeCallback {
         if (isConnected) {
             showYoutube(videoId, startTime)
         } else {
-            ToastUtil.showToast(this)
+            ToastUtil.showToast(this,"")
         }
     }
 
@@ -148,19 +148,19 @@ class Selengkapnya : AppCompatActivity(), NetworkChangeCallback {
         startActivity(intent)
     }
 
-    private fun handlePdfClick(pdfUrl: String) {
-        if (isConnected) {
-            showPdf(pdfUrl)
-        } else {
-            ToastUtil.showToast(this)
-        }
-    }
+//    private fun handlePdfClick(pdfUrl: String) {
+//        if (isConnected) {
+//            showPdf(pdfUrl)
+//        } else {
+//            ToastUtil.showToast(this)
+//        }
+//    }
 
-    private fun showPdf(pdfUrl: String) {
-        val intent = Intent(this, Materi::class.java)
-        intent.putExtra(Materi.EXTRA_URL, pdfUrl)
-        startActivity(intent)
-    }
+//    private fun showPdf(pdfUrl: String) {
+//        val intent = Intent(this, Materi::class.java)
+//        intent.putExtra(Materi.EXTRA_URL, pdfUrl)
+//        startActivity(intent)
+//    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -190,7 +190,7 @@ class Selengkapnya : AppCompatActivity(), NetworkChangeCallback {
         buttons.forEach { it.isEnabled = isConnected }
 
         if (!isConnected) {
-            ToastUtil.showToast(this)
+            ToastUtil.showToast(this,"")
         }
     }
 

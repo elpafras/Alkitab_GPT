@@ -47,7 +47,7 @@ class YoutubePlayer : AppCompatActivity(), NetworkChangeCallback {
         this.isConnected = isConnected
 
         if (!isConnected) {
-            ToastUtil.showToast(this)
+            ToastUtil.showToast(this,"")
         }
     }
 

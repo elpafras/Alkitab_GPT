@@ -15,6 +15,14 @@
       </SelectionState>
       <SelectionState runConfigName="AlkitabGPT">
         <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2025-03-14T06:53:28.573139100Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=8d01cba0" />
+            </handle>
+          </Target>
+        </DropdownSelection>
+        <DialogSelection />
       </SelectionState>
       <SelectionState runConfigName="androidApp">
         <option name="selectionMode" value="DROPDOWN" />

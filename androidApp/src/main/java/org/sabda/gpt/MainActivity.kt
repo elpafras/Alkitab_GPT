@@ -34,7 +34,6 @@ import org.sabda.gpt.fragment.HomeFragment
 import org.sabda.gpt.utility.NetworkUtil
 import org.sabda.gpt.utility.NetworkUtil.NetworkChangeCallback
 import org.sabda.gpt.utility.ToastUtil
-import org.sabda.gpt.utility.MenuUtil
 
 class MainActivity : AppCompatActivity(), NetworkChangeCallback {
 
@@ -146,7 +145,7 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
 
     private fun handleIntent(intent: Intent) {
         intent.getStringExtra("inputPedia")?.let {
-           TODO()
+            TODO()
         } ?: intent.getStringExtra("topic")?.let {
             val topic = it
             val lastBookName = intent.getStringExtra("lastBookName") ?: ""
@@ -160,9 +159,11 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
         }
 
         intent.extras?.let {
-            startActivity(Intent(this, AlkitabGPT::class.java).apply {
-                putExtras(it)
-            })
+            if (it.containsKey("YOUTUBE_ID") || it.containsKey("PDF_URL") || it.containsKey("TITLE")) {
+                startActivity(Intent(this, AlkitabGPT::class.java).apply {
+                    putExtras(it)
+                })
+            }
         }
     }
 
@@ -211,22 +212,28 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
             true
         }
 
-        binding.navBottom?.itemIconTintList = ColorStateList.valueOf(Color.WHITE)
-        binding.navBottom?.itemTextColor = ColorStateList.valueOf(Color.WHITE)
+        // binding.navBottom?.itemIconTintList = ColorStateList.valueOf(Color.WHITE)
+        // binding.navBottom?.itemTextColor = ColorStateList.valueOf(Color.WHITE)
 
         val isNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
 
         val activeColor = ContextCompat.getColor(
-            this, if (isNightMode) R.color.night_nav_active else R.color.nav_active
+            this, if (isNightMode) R.color.nav_active else R.color.nav_active
         )
         binding.navBottom?.itemActiveIndicatorColor = ColorStateList.valueOf(activeColor)
+
+        val iconTextColor = ContextCompat.getColor(
+            this, if (isNightMode) R.color.black else R.color.white
+        )
+        binding.navBottom?.itemIconTintList = ColorStateList.valueOf(iconTextColor)
+        binding.navBottom?.itemTextColor = ColorStateList.valueOf(iconTextColor)
     }
 
     private fun initializeNetwork() {
         isConnected = NetworkUtil.isNetworkAvailable(this)
         updateConnectionStatus(isConnected)
         if (!isConnected) {
-            ToastUtil.showToast(this)
+            ToastUtil.showToast(this,"")
         }
         NetworkUtil.registerNetworkChangeReceiver(
             this
@@ -336,7 +343,7 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
         if (isConnected) {
             title?.let { NetworkUtil.openWebView(this, url, it) } ?: NetworkUtil.openUrl(this, url)
         } else {
-            ToastUtil.showToast(this)
+            ToastUtil.showToast(this,"")
         }
     }
 
@@ -344,7 +351,7 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
         this.isConnected = isConnected
 
         if (!isConnected) {
-            ToastUtil.showToast(this)
+            ToastUtil.showToast(this,"")
         }
     }
 

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:id="@+id/sectionTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"/>
+
+    <com.github.chrisbanes.photoview.PhotoView
+        android:id="@+id/sectionImage"
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/sectionTitle"/>
+
+    <Button
+        android:id="@+id/sectionButton"
+        android:layout_width="275dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="#082147"
+        android:textColor="@color/white"
+        android:layout_below="@id/sectionImage"/>
+
+    <LinearLayout
+        android:id="@+id/sectionButtonFrame"
+        android:layout_width="275dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/sectionButton"
+        android:layout_centerHorizontal="true">
+
+        <Button
+            android:id="@+id/sectionVideoButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:backgroundTint="#082147"
+            android:textColor="@color/white"
+            android:layout_gravity="center"
+            android:layout_marginEnd="5dp"/>
+
+        <Button
+            android:id="@+id/sectionPdfButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:backgroundTint="#082147"
+            android:textColor="@color/white"
+            android:layout_gravity="center"
+            android:layout_marginStart="5dp"/>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/sectionDivider"
+        android:layout_width="300dp"
+        android:layout_height="2dp"
+        android:background="@drawable/rounded_corner"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:layout_below="@id/sectionButtonFrame"/>
+
+</merge>

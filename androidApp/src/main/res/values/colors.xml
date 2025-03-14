@@ -14,4 +14,6 @@
 
     <color name="nav_active">#80BDBCBC</color>
     <color name="night_nav_active">#4D4D4D</color>
+    <color name="highlight_color">#FF0000</color>
+    <color name="default_text_color">#000000</color>
 </resources>

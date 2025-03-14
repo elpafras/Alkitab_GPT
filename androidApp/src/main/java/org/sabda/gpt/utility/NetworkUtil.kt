@@ -11,9 +11,11 @@ import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
 import org.sabda.gpt.AlkitabGPT
+import org.sabda.gpt.MainActivity
 
 object NetworkUtil {
     private var broadcastReceiver: BroadcastReceiver? = null
+    private var isReceiverRegistered = false  // ✅ Tambahkan flag untuk mengecek status pendaftaran
 
     fun isNetworkAvailable(context: Context): Boolean {
         val connectivityManager =
@@ -52,24 +54,32 @@ object NetworkUtil {
     }
 
     fun registerNetworkChangeReceiver(context: Context, callback: (Boolean) -> Unit) {
-        if (broadcastReceiver == null) {
-            broadcastReceiver = object : BroadcastReceiver() {
-                override fun onReceive(context: Context, intent: Intent) {
-                    val isConnected = isNetworkAvailable(context)
-                    callback(isConnected)
-                    if (!isConnected) {
-                        ToastUtil.showToast(context)
-                    }
+        if (isReceiverRegistered) return  // ✅ Cegah double registration
+
+        broadcastReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                val isConnected = isNetworkAvailable(context)
+                callback(isConnected)
+                if (!isConnected) {
+                    ToastUtil.showToast(context, "")
                 }
             }
         }
+
         val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
         context.registerReceiver(broadcastReceiver, filter)
+        isReceiverRegistered = true  // ✅ Update flag setelah pendaftaran
     }
 
     fun unregisterNetworkChangeReceiver(context: Context) {
-        if (broadcastReceiver != null) {
-            context.unregisterReceiver(broadcastReceiver)
+        if (isReceiverRegistered && broadcastReceiver != null) {
+            try {
+                context.unregisterReceiver(broadcastReceiver)
+                broadcastReceiver = null
+                isReceiverRegistered = false  // ✅ Reset flag setelah unregister
+            } catch (e: IllegalArgumentException) {
+                e.printStackTrace() // ✅ Hindari crash jika receiver belum terdaftar
+            }
         }
     }
 

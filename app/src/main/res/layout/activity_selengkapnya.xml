@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Selengkapnya"
+    android:background="@color/white">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/darkblue">
+
+        <ImageView
+            android:id="@+id/kembali"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_arrow_back_24"/>
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pelajari_lebih"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginStart="30dp"/>
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/titleR"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/resources"
+                android:textColor="@color/black"
+                android:textSize="40sp"
+                android:textStyle="bold"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:id="@+id/judulAidanAlkitab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/aidanalkitab"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/titleR"/>
+
+            <com.github.chrisbanes.photoview.PhotoView
+                android:id="@+id/aidanAlkitab"
+                android:layout_width="300dp"
+                android:layout_height="100dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/judulAidanAlkitab"/>
+
+            <Button
+                android:id="@+id/aidanAlkitabButton"
+                android:layout_width="275dp"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:text="@string/aidanalkitab"
+                android:backgroundTint="#082147"
+                android:textColor="@color/white"
+                android:layout_below="@id/aidanAlkitab"/>
+
+            <LinearLayout
+                android:id="@+id/btnFrameAidanAlkitab"
+                android:layout_width="275dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/aidanAlkitabButton"
+                android:layout_centerHorizontal="true">
+
+                <Button
+                    android:id="@+id/videoaidanAlkitab"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text="@string/video"
+                    android:backgroundTint="#082147"
+                    android:textColor="@color/white"
+                    android:layout_gravity="center"/>
+
+                <Button
+                    android:id="@+id/pdfaidanAlkitab"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text="@string/pdf"
+                    android:backgroundTint="#082147"
+                    android:textColor="@color/white"
+                    android:layout_gravity="center"/>
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="300dp"
+                android:layout_height="2dp"
+                android:background="@drawable/rounded_corner"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/btnFrameAidanAlkitab"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:id="@+id/judulAlkitabGPT"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/alkitab_gpt"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:layout_below="@id/btnFrameAidanAlkitab"/>
+
+            <com.github.chrisbanes.photoview.PhotoView
+                android:id="@+id/AlkitabGPT"
+                android:layout_width="300dp"
+                android:layout_height="150dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/judulAlkitabGPT"/>
+
+            <Button
+                android:id="@+id/alkitabGPTbutton"
+                android:layout_width="275dp"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:text="@string/alkitab_gpt"
+                android:backgroundTint="#082147"
+                android:textColor="@color/white"
+                android:layout_below="@id/AlkitabGPT"/>
+
+            <LinearLayout
+                android:id="@+id/btnFrameAlkitabGPT"
+                style="?android:attr/buttonBarStyle"
+                android:layout_width="275dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/alkitabGPTbutton"
+                android:layout_centerHorizontal="true">
+
+                <Button
+                    android:id="@+id/videoAlkitabGPT"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text="@string/video"
+                    android:backgroundTint="#082147"
+                    android:textColor="@color/white"
+                    android:layout_gravity="center"/>
+
+                <Button
+                    android:id="@+id/pdfAlkitabGPT"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text="@string/pdf"
+                    android:backgroundTint="#082147"
+                    android:textColor="@color/white"
+                    android:layout_gravity="center"/>
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/view1"
+                android:layout_width="300dp"
+                android:layout_height="2dp"
+                android:background="@drawable/rounded_corner"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/btnFrameAlkitabGPT"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:id="@+id/judulaisquared"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/metode_ai_squared"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:layout_below="@id/btnFrameAlkitabGPT"/>
+
+            <com.github.chrisbanes.photoview.PhotoView
+                android:id="@+id/AI_SquareSquare"
+                android:layout_width="300dp"
+                android:layout_height="150dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/judulaisquared"/>
+
+            <Button
+                android:id="@+id/aisquaredbutton"
+                android:layout_width="275dp"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:text="@string/ai_squared"
+                android:backgroundTint="#082147"
+                android:textColor="@color/white"
+                android:layout_below="@id/AI_SquareSquare"/>
+
+            <LinearLayout
+                android:id="@+id/btnFrameaiSquared"
+                style="?android:attr/buttonBarStyle"
+                android:layout_width="275dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/aisquaredbutton"
+                android:layout_centerHorizontal="true">
+
+                <Button
+                    android:id="@+id/videoaiSquared"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text="@string/video"
+                    android:backgroundTint="#082147"
+                    android:textColor="@color/white"
+                    android:layout_gravity="center"/>
+
+                <Button
+                    android:id="@+id/pdfaiSquared"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text="@string/pdf"
+                    android:backgroundTint="#082147"
+                    android:textColor="@color/white"
+                    android:layout_gravity="center"/>
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/view2"
+                android:layout_width="300dp"
+                android:layout_height="2dp"
+                android:background="@drawable/rounded_corner"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/btnFrameaiSquared"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:id="@+id/judulfokus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/metode_f_o_k_u_s"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:layout_below="@id/btnFrameaiSquared"/>
+
+            <com.github.chrisbanes.photoview.PhotoView
+                android:id="@+id/FOKUS"
+                android:layout_width="300dp"
+                android:layout_height="150dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/judulfokus"/>
+
+            <Button
+                android:id="@+id/fokusbutton"
+                android:layout_width="275dp"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:text="@string/f_o_k_u_s"
+                android:backgroundTint="#082147"
+                android:textColor="@color/white"
+                android:layout_below="@id/FOKUS"/>
+
+            <LinearLayout
+                android:id="@+id/btnFrameFokus"
+                style="?android:attr/buttonBarStyle"
+                android:layout_width="275dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/fokusbutton"
+                android:layout_centerHorizontal="true">
+
+                <Button
+                    android:id="@+id/videofokus"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text="@string/video"
+                    android:backgroundTint="#082147"
+                    android:textColor="@color/white"
+                    android:layout_gravity="center" />
+
+                <Button
+                    android:id="@+id/pdffokus"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text="@string/pdf"
+                    android:backgroundTint="#082147"
+                    android:textColor="@color/white"
+                    android:layout_gravity="center"/>
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/view3"
+                android:layout_width="300dp"
+                android:layout_height="2dp"
+                android:background="@drawable/rounded_corner"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/btnFrameFokus"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:id="@+id/judulBibleGpt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/bible_gpt"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/view3"/>
+
+            <com.github.chrisbanes.photoview.PhotoView
+                android:id="@+id/bibleGpt"
+                android:layout_width="300dp"
+                android:layout_height="150dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/judulBibleGpt"/>
+
+            <LinearLayout
+                android:id="@+id/btnFrameBibleGpt"
+                style="?android:attr/buttonBarStyle"
+                android:layout_width="275dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/bibleGpt"
+                android:layout_centerHorizontal="true"
+                android:paddingBottom="100dp">
+
+                <Button
+                    android:id="@+id/videoBibleGpt"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text="@string/video"
+                    android:backgroundTint="#082147"
+                    android:textColor="@color/white"
+                    android:layout_gravity="center" />
+
+                <Button
+                    android:id="@+id/pdfBibleGpt"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text="@string/pdf"
+                    android:backgroundTint="#082147"
+                    android:textColor="@color/white"
+                    android:layout_gravity="center"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal">
+        
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            android:backgroundTint="@color/white"/>
+        
+        <Button
+            android:id="@+id/cobabutton"
+            android:layout_width="275dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#082147"
+            android:text="@string/coba_pa_dengan_ai"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"/>
+        
+    </RelativeLayout>
+
+</FrameLayout>

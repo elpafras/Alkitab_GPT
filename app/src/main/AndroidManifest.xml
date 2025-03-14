@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <permission
+        android:name="org.sabda.gpt.PEDIA_BROADCAST_KEY"
+        android:protectionLevel="normal" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <queries>
+        <package android:name="org.sabda.alkitab" />
+        <package android:name="org.sabda.pedia" />
+        <package android:name="org.sabda.tafsiran" />
+        <package android:name="org.sabda.kamus" />
+    </queries>
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher_round"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AlkitabGPT"
+        tools:targetApi="31">
+        <activity
+            android:name=".QuestionAnswer"
+            android:exported="false" />
+
+        <service
+            android:name=".broadcastservice.AppService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <receiver
+            android:name=".broadcastservice.AppBroadcastReceiver"
+            android:exported="true"
+            android:permission="org.sabda.gpt.PEDIA_BROADCAST_KEY">
+            <intent-filter>
+                <action android:name="org.sabda.gpt.PEDIA_BROADCAST" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".AlkitabGPT"
+            android:exported="true"
+            android:configChanges="orientation|screenSize|keyboardHidden"/>
+        <activity
+            android:name=".Tentang"
+            android:exported="false" />
+        <activity
+            android:name=".Materi"
+            android:exported="false" />
+        <activity
+            android:name=".YoutubePlayer"
+            android:exported="false" />
+        <activity
+            android:name=".Selengkapnya"
+            android:exported="false" />
+        <activity
+            android:name=".SplashScreenActivity"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:windowSoftInputMode="stateHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" />
+                <data android:host="gpt.sabda.org" />
+                <data android:path="/apps/" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

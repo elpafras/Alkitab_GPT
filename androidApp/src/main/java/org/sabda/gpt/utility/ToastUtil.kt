@@ -4,27 +4,34 @@ import android.content.Context
 import android.graphics.Color
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-import org.sabda.gpt.R
 
 object ToastUtil {
-    fun showToast(ctx: Context?) {
-        val toast = Toast(ctx)
+    fun showToast(ctx: Context?, message: String) {
+        if (ctx == null) return // Cegah crash jika context null
 
-        val textView = TextView(ctx)
-        textView.setText(R.string.toast_offline)
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
-        textView.setBackgroundColor(Color.BLACK)
-        textView.setTextColor(Color.WHITE)
-        textView.setPadding(16, 8, 16, 8)
-        textView.gravity = Gravity.CENTER
-        toast.view = textView
+        val toast = Toast.makeText(ctx, message, Toast.LENGTH_LONG)
 
-        toast.setGravity(Gravity.CENTER_VERTICAL or Gravity.CENTER_HORIZONTAL, 0, 0)
+        // Pastikan toast memiliki view sebelum mencoba mengubah tampilannya
+        val toastView = toast.view
+        if (toastView != null) {
+            val textView = toastView.findViewById<TextView>(android.R.id.message)
+            textView?.apply {
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+                setBackgroundColor(Color.BLACK)
+                setTextColor(Color.WHITE)
+                setPadding(32, 16, 32, 16)
+                gravity = Gravity.CENTER
+            }
 
-        toast.duration = Toast.LENGTH_LONG
+            // Pastikan view dapat ditampilkan
+            toastView.setBackgroundColor(Color.DKGRAY)
+        }
 
+        // Atur posisi toast agar muncul di tengah layar
+        toast.setGravity(Gravity.CENTER, 0, 200)
         toast.show()
     }
 }

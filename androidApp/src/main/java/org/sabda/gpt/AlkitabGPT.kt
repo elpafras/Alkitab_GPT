@@ -89,7 +89,7 @@ class AlkitabGPT : AppCompatActivity(), NetworkChangeCallback {
 
     private fun updateConnectionStatus(isConnected: Boolean) {
         this.isConnected = isConnected
-        if (!isConnected) ToastUtil.showToast(this)
+        if (!isConnected) ToastUtil.showToast(this,"")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

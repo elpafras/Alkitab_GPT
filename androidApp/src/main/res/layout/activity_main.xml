@@ -3,79 +3,87 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawerLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
 
-        <FrameLayout
-            android:id="@+id/contentFrame"
+        <!-- Konten Utama -->
+        <RelativeLayout
+            android:id="@+id/contentLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <RelativeLayout
+            <!-- Tombol Menu (Drawer) -->
+            <ImageView
+                android:id="@+id/drawer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_dehaze_24"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true" />
+
+            <!-- Tombol Dots -->
+            <ImageView
+                android:id="@+id/dots"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/dots"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"/>
+
+            <!-- Frame untuk Fragment -->
+            <FrameLayout
+                android:id="@+id/fragmentFrame"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="0dp"
+                android:layout_below="@id/drawer"
+                android:layout_above="@id/navBottom"
+                android:layout_marginBottom="16dp"/>
 
-                <ImageView
-                    android:id="@+id/drawer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/baseline_dehaze_24"
-                    android:layout_margin="15dp"
-                    android:layout_alignParentStart="true" />
+            <!-- Bottom Navigation -->
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/navBottom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:background="@color/darkblue"
+                app:menu="@menu/nav_bottom"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-                <ImageView
-                    android:id="@+id/dots"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/dots"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginEnd="12dp" />
+            <!-- Floating Chat Button -->
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/floatingChatButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/chat"
+                android:src="@drawable/ai_button"
+                android:backgroundTint="@color/white"
+                android:layout_above="@id/navBottom"
+                android:layout_marginBottom="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_alignParentEnd="true"/>
 
-                <FrameLayout
-                    android:id="@+id/fragmentFrame"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_below="@id/drawer"
-                    android:layout_marginBottom="80dp" />
+        </RelativeLayout>
 
-                <com.google.android.material.bottomnavigation.BottomNavigationView
-                    android:id="@+id/navBottom"
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_alignParentBottom="true"
-                    android:background="@color/darkblue"
-                    app:menu="@menu/nav_bottom"/>
-
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/floatingChatButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/chat"
-                    android:src="@drawable/ai_button"
-                    android:backgroundTint="@color/white"
-                    android:layout_above="@id/navBottom"
-                    android:layout_alignParentEnd="true"
-                    android:layout_margin="20dp"/>
-
-            </RelativeLayout>
-
-        </FrameLayout>
-
+        <!-- Expandable Drawer Menu -->
         <ExpandableListView
             android:id="@+id/expandableListView"
-            android:layout_width="250dp"
+            android:layout_width="280dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:background="@color/white" />
+            android:background="@color/white"
+            android:paddingTop="16dp"/>
 
     </androidx.drawerlayout.widget.DrawerLayout>
-
-
 
 </RelativeLayout>

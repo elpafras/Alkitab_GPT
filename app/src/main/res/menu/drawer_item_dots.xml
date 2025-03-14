@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+        <item
+            android:id="@+id/AlkitabGPT"
+            android:title="@string/app_name"/>
+        <item
+            android:id="@+id/pelajari"
+            android:title="@string/pelajari_lebih"/>
+        <item
+            android:id="@+id/question"
+            android:title="@string/question_and_answer"/>
+        <item
+            android:id="@+id/realese"
+            android:title="@string/release_note"/>
+        <item
+            android:id="@+id/tentang"
+            android:title="@string/tentang"/>
+    </group>
+</menu>

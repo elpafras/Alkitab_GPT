@@ -298,6 +298,7 @@ class ChatActivity : BaseActivity<ActivityChatBinding>(), AIFragment.ChatFragmen
             }
             .create()
             .show()
+
     }
 
     private fun showAIOptionsDialog() {

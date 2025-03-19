@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.sabda.gpt.model.ChatbotData
 import org.sabda.gpt.R
 
-class ChatAdapter(private val chatbotData: List<ChatbotData>) :
+class ChatAdapter(private val messageData: List<ChatbotData> ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object{
@@ -17,7 +17,7 @@ class ChatAdapter(private val chatbotData: List<ChatbotData>) :
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (chatbotData[position].isSent) TYPE_SENT else TYPE_RECEIVED
+        return if (messageData[position].isSent) TYPE_SENT else TYPE_RECEIVED
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -33,23 +33,22 @@ class ChatAdapter(private val chatbotData: List<ChatbotData>) :
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val chatbotData = chatbotData[position]
+        val message = messageData[position]
         if (holder is SentViewHolder) {
-            holder.text1.text = chatbotData.text
+            holder.textViewMessage.text = message.text
         } else if (holder is ReceiveViewHolder) {
-            holder.text2.text = chatbotData.text
+            holder.textViewMessage1.text = message.text
         }
     }
 
-    override fun getItemCount(): Int = chatbotData.size
+    override fun getItemCount(): Int = messageData.size
 
-    class SentViewHolder(view: View) : RecyclerView.ViewHolder(view){
-        val text1: TextView = view.findViewById(R.id.textViewMessage)
+
+    class SentViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val textViewMessage: TextView = view.findViewById(R.id.textViewMessage)
     }
 
     class ReceiveViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val text2: TextView = view.findViewById(R.id.textViewMessageReceive)
+        val textViewMessage1: TextView = view.findViewById(R.id.textViewMessageReceive)
     }
-
-
 }

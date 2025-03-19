@@ -12,7 +12,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/darkblue">
+        android:background="@color/white">
 
         <ImageView
             android:id="@+id/out"
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
             android:text="title"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold" />
 

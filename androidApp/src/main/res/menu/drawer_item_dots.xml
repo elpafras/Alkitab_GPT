@@ -3,7 +3,7 @@
     <group>
         <item
             android:id="@+id/AlkitabGPT"
-            android:title="@string/app_name"/>
+            android:title="@string/menu_app_name"/>
         <item
             android:id="@+id/pelajari"
             android:title="@string/pelajari_lebih"/>

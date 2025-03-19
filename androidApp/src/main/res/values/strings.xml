@@ -1,14 +1,14 @@
 <resources>
     <string name="app_name">Alkitab GPT</string>
+    <string name="menu_app_name"><font size="20">Alkitab GPT</font></string>
 
     <!-- TextView, Button, View Purpose -->
     <string name="deskripsi"><b>Alkitab GPT (Bible Man)</b> adalah teknologi AI yang dirancang untuk menjadi <b>alat</b>, <b>asisten</b>, <b>teman</b> dalam melakukan <b>studi Alkitab</b> bagi tubuh Kristus di Indonesia untuk mendapatkan pengalaman <u>studi Alkitab</u> yang fun, mendalam, bertanggung jawab, dan relevan.</string>
-    <string name="alkitab_gpt">Seminar: Alkitab GPT</string>
     <string name="cobasekarang">Coba Sekarang</string>
+    <string name="chat">Chat</string>
     <string name="pelajari_lebih_lanjut">Pelajari AI dan Alkitab lebih lanjut</string>
-    <string name="pelajari_lebih">Pelajari AI dan Alkitab</string>
+    <string name="pelajari_lebih"><font size="20">Pelajari AI dan Alkitab</font></string>
     <string name="ai_squared">AI Squared</string>
-    <string name="metode_f_o_k_u_s">Metode F\.O\.K\.U\.S\.</string>
     <string name="f_o_k_u_s">F\.O\.K\.U\.S\.</string>
     <string name="coba_pa_dengan_ai">Coba PA dengan AI</string>
     <string name="close_app">Apakah Anda ingin keluar aplikasi?</string>
@@ -16,12 +16,11 @@
     <string name="iya">Ya</string>
     <string name="prompt">Ketik prompt anda di sini</string>
     <string name="kuy">Coba PA dengan AI sekarang!</string>
-    <string name="metode_ai_squared">Metode AI Squared</string>
     <string name="video">Video</string>
     <string name="pdf">PPT</string>
     <string name="send">button to send prompt</string>
     <string name="close">close</string>
-    <string name="tentang">Tentang</string>
+    <string name="tentang"><font size="20">Tentang</font></string>
     <string name="version">version: %s</string>
     <string name="tentang_panjang">
         Aplikasi \"Alkitab GPT\" adalah aplikasi Android yang dikembangkan oleh Yayasan Lembaga SABDA (YLSA) sebagai teknologi yang memungkinkan pengguna untuk melakukan studi Alkitab dengan memanfaatkan teknologi AI.\n\nAlkitab GPT telah melalui proses pelatihan intensive dengan menggunakan ratusan dataset SABDA Bot, versi-versi Alkitab, dan sumber-sumber kekristenan lainnya agar Alkitab GPT memberikan hasil yang sesuai dengan konteks Alkitab dan tidak ambigu.
@@ -33,10 +32,9 @@
     <string name="free">… freely ye have received,\n freely give. (Mat 10:8)</string>
     <string name="toast_offline">Maaf, aplikasi hanya bisa\n diakses secara <i>online</i>\n tolong sambungkan perangkat Anda dengan internet</string>
     <string name="cc">%d</string>
-    <string name="aidanalkitab">Seminar: AI &amp; Alkitab</string>
+
     <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tincidunt turpis in risus egestas, </string>
     <string name="resources">Resources</string>
-    <string name="bible_gpt">Bible + GPT</string>
     <string name="kembali">Kembali</string>
     <string name="situs">Situs: Alkitab GPT</string>
     <string name="situs2"><font size="20"><b>Situs</b></font></string>
@@ -52,7 +50,7 @@
     <string name="komunitas">Komunitas</string>
     <string name="ai4cg">AI-4-Church &amp; AI-4-GOD</string>
     <string name="situs_ai">Situs: AI</string>
-    <string name="release_note">Release Notes</string>
+    <string name="release_note"><font size="20">Release Notes</font></string>
     <string name="message_release_notes">Alkitab GPT (2.2)\n- Penambahan Chatbox\n- Penambahan Materi di bagian Resources</string>
     <string name="openai">OpenAI</string>
     <string name="wa_chatgpt">WA: ChatGPT</string>
@@ -68,7 +66,7 @@
     <string name="sabda_apps_link"><u>https://sabda.app</u></string>
 
     <!--Q&A-->
-    <string name="question_and_answer"><![CDATA[Question & Answer]]></string>
+    <string name="question_and_answer"><font size="20"><![CDATA[Question & Answer]]></font></string>
     <string name="question1">T: Apa itu Alkitab GPT?</string>
     <string name="question2">T: Mengapa saya diarahkan ke ChatGPT di OpenAI saat mencoba mengakses Alkitab GPT?</string>
     <string name="question3">T: Apa perbedaan Alkitab GPT dengan ChatGPT biasa?</string>
@@ -105,4 +103,17 @@
     <string name="home">Home</string>
     <string name="ai">AI</string>
 
+    <!--Title Artikel-->
+    <string name="aidanalkitab">Seminar: AI &amp; Alkitab</string>
+    <string name="alkitab_gpt">Seminar: Alkitab GPT</string>
+    <string name="metode_ai_squared">Metode AI Squared</string>
+    <string name="metode_f_o_k_u_s">Metode F\.O\.K\.U\.S\.</string>
+    <string name="bible_gpt">Bible + GPT</string>
+
+    <!--Teks Artikel-->
+    <string name="teksartikelaidanalkitab">Secara pasti, AI telah memberi dampak yang sangat luas dalam pelayanan Kristen, termasuk terhadap Alkitab. Mari kita berbincang-bincang mengenai dampak AI seputar terjemahan, distribusi, dan penggunaan Alkitab di #AITalks: “AI dan Alkitab”.</string>
+    <string name="teksartikelalkitab_gpt">SABDA mengundang Teman-teman semua untuk berkenalan dengan "Alkitab GPT atau Bible Man". Apa itu Alkitab GPT? Apa keistimewaannya? Gimana cara pakainya? Nah, penasaran kan? Yuk, bergabung dalam acara seri #AITalks: Go-AI! "Alkitab GPT (Bible Man)", cara baru untuk belajar/studi Alkitab.</string>
+    <string name="teksartikelmetode_ai_squared">Tahun baru 2024 akan lanjut membawa perubahan, terkhusus dengan penetrasi teknologi AI yang semakin meluas di semua bidang kehidupan. Bagaimana dengan cara kita mempelajari Alkitab? SABDA mengajak Sahabat SABDA untuk belajar cara baru yang fun dan menarik dalam melakukan PA. Untuk itu, mari bergabung dalam acara seri go-AI! yang berjudul "PA dengan AI: Cara AI2 (AI Squared)".</string>
+    <string name="teksartikelmetode_f_o_k_u_s">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tincidunt turpis in risus egestas,</string>
+    <string name="teksartikelbible_gpt">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tincidunt turpis in risus egestas,</string>
 </resources>

@@ -55,7 +55,7 @@ class Tentang : AppCompatActivity(), NetworkChangeCallback {
         kotakSaranLink.isEnabled = isConnected
 
         if (!isConnected) {
-            ToastUtil.showToast(this)
+            ToastUtil.showToast(this,"")
         }
     }
 
@@ -63,7 +63,7 @@ class Tentang : AppCompatActivity(), NetworkChangeCallback {
         if (isConnected) {
             NetworkUtil.openUrl(this, url)
         } else {
-            ToastUtil.showToast(this)
+            ToastUtil.showToast(this,"")
         }
     }
 

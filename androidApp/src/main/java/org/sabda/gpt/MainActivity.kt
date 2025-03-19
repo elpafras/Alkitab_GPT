@@ -8,16 +8,15 @@ import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
-import android.view.KeyEvent
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
 import android.widget.PopupMenu
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
@@ -35,7 +34,6 @@ import org.sabda.gpt.fragment.HomeFragment
 import org.sabda.gpt.utility.NetworkUtil
 import org.sabda.gpt.utility.NetworkUtil.NetworkChangeCallback
 import org.sabda.gpt.utility.ToastUtil
-import kotlin.and
 
 class MainActivity : AppCompatActivity(), NetworkChangeCallback {
 
@@ -51,11 +49,31 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
     private var listDataChild: HashMap<String, MutableList<String>>? = null
     private var isConnected: Boolean = false
 
+    private val inactivityTimeout = 3000L // 3 detik
+    private val handler = Handler(Looper.getMainLooper())
+    private val hideFloatingButtonRunnable = Runnable {
+        binding.floatingChatButton.animate()
+            .alpha(0f)
+            .setDuration(500)
+            .setInterpolator(AccelerateInterpolator())
+            .withEndAction { binding.floatingChatButton.visibility = View.GONE }
+            .start()
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.root.post {
+            if (savedInstanceState == null) {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentFrame, HomeFragment())
+                    .commit()
+                supportFragmentManager.executePendingTransactions()
+            }
+        }
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
@@ -70,6 +88,7 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
         setInitialInput()
         setupNavBottom()
         handleIntent(intent)
+        setupButtons()
 
         val callback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -99,9 +118,34 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
         }
     }
 
+    override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
+        resetInactivityTimer() // Setiap ada sentuhan, reset timer
+        return super.dispatchTouchEvent(event)
+    }
+
+    private fun resetInactivityTimer() {
+        handler.removeCallbacks(hideFloatingButtonRunnable)
+        binding.floatingChatButton.visibility = View.VISIBLE
+        binding.floatingChatButton.animate()
+            .alpha(1f)
+            .setDuration(500)
+            .setInterpolator(DecelerateInterpolator())
+            .start()
+        handler.postDelayed(hideFloatingButtonRunnable, inactivityTimeout)
+    }
+
+    private fun setupButtons() {
+        binding.floatingChatButton.setOnClickListener {
+            val intent = Intent(this@MainActivity, ChatActivity::class.java).apply {
+                putExtra("START_NEW_CHAT", true)
+            }
+            startActivity(intent)
+        }
+    }
+
     private fun handleIntent(intent: Intent) {
         intent.getStringExtra("inputPedia")?.let {
-           TODO()
+            TODO()
         } ?: intent.getStringExtra("topic")?.let {
             val topic = it
             val lastBookName = intent.getStringExtra("lastBookName") ?: ""
@@ -115,9 +159,11 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
         }
 
         intent.extras?.let {
-            startActivity(Intent(this, AlkitabGPT::class.java).apply {
-                putExtras(it)
-            })
+            if (it.containsKey("YOUTUBE_ID") || it.containsKey("PDF_URL") || it.containsKey("TITLE")) {
+                startActivity(Intent(this, AlkitabGPT::class.java).apply {
+                    putExtras(it)
+                })
+            }
         }
     }
 
@@ -166,22 +212,28 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
             true
         }
 
-        binding.navBottom?.itemIconTintList = ColorStateList.valueOf(Color.WHITE)
-        binding.navBottom?.itemTextColor = ColorStateList.valueOf(Color.WHITE)
+        // binding.navBottom?.itemIconTintList = ColorStateList.valueOf(Color.WHITE)
+        // binding.navBottom?.itemTextColor = ColorStateList.valueOf(Color.WHITE)
 
         val isNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
 
         val activeColor = ContextCompat.getColor(
-            this, if (isNightMode) R.color.night_nav_active else R.color.nav_active
+            this, if (isNightMode) R.color.nav_active else R.color.nav_active
         )
         binding.navBottom?.itemActiveIndicatorColor = ColorStateList.valueOf(activeColor)
+
+        val iconTextColor = ContextCompat.getColor(
+            this, if (isNightMode) R.color.black else R.color.white
+        )
+        binding.navBottom?.itemIconTintList = ColorStateList.valueOf(iconTextColor)
+        binding.navBottom?.itemTextColor = ColorStateList.valueOf(iconTextColor)
     }
 
     private fun initializeNetwork() {
         isConnected = NetworkUtil.isNetworkAvailable(this)
         updateConnectionStatus(isConnected)
         if (!isConnected) {
-            ToastUtil.showToast(this)
+            ToastUtil.showToast(this,"")
         }
         NetworkUtil.registerNetworkChangeReceiver(
             this
@@ -291,7 +343,7 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
         if (isConnected) {
             title?.let { NetworkUtil.openWebView(this, url, it) } ?: NetworkUtil.openUrl(this, url)
         } else {
-            ToastUtil.showToast(this)
+            ToastUtil.showToast(this,"")
         }
     }
 
@@ -299,7 +351,7 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
         this.isConnected = isConnected
 
         if (!isConnected) {
-            ToastUtil.showToast(this)
+            ToastUtil.showToast(this,"")
         }
     }
 
@@ -337,9 +389,8 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
     override fun onDestroy() {
         super.onDestroy()
         NetworkUtil.unregisterNetworkChangeReceiver(this)
+        handler.removeCallbacks(hideFloatingButtonRunnable)
     }
-
-
 
     override fun onNetworkChange(isConnected: Boolean) {
         updateConnectionStatus(isConnected)

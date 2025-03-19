@@ -4,9 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".ChatActivity">
 
     <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawerLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -14,61 +16,100 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/historyImageView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/history"
-                android:src="@drawable/notes"
-                android:layout_margin="10dp"/>
+            <!-- Toolbar -->
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/darkblue"
+                android:elevation="4dp"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-            <TextView
-                android:id="@+id/chatTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/app_name"
-                android:textColor="@color/black"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:layout_margin="12dp"
-                android:layout_toEndOf="@id/historyImageView"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp">
 
+                    <!-- Tombol History -->
+                    <ImageView
+                        android:id="@+id/btnHistory"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/send"
+                        android:src="@drawable/noteswhite"/>
+
+                    <!-- Judul Chat -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Alkitab GPT"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:layout_marginStart="16dp"
+                        android:layout_weight="1"/>
+
+                    <!-- Tombol Chat Baru -->
+                    <ImageView
+                        android:id="@+id/newChatImageView"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:contentDescription="newchat"
+                        android:src="@drawable/baseline_edit_square_24"/>
+                </LinearLayout>
+            </androidx.appcompat.widget.Toolbar>
+
+            <!-- RecyclerView untuk Chat -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="10dp"
-                android:layout_below="@id/chatTextView"
-                android:layout_above="@id/inputEditText"/>
+                android:layout_height="0dp"
+                android:layout_below="@id/toolbar"
+                android:layout_above="@id/messageContainer"
+                android:padding="10dp"
+                android:clipToPadding="false"/>
 
-            <EditText
-                android:id="@+id/inputEditText"
+            <!-- Input Chat -->
+            <LinearLayout
+                android:id="@+id/messageContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_toStartOf="@id/send"
-                android:hint="@string/prompt"
-                android:layout_marginBottom="10dp"
-                android:layout_marginStart="10dp"/>
+                android:layout_margin="10dp"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                android:background="@drawable/rounded_corner"
+                android:backgroundTint="#e9e9e9"
+                android:elevation="4dp">
 
+                <!-- EditText untuk Input Pesan -->
+                <EditText
+                    android:id="@+id/editTextMessage"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:hint="Type a message"
+                    android:padding="10dp"
+                    android:background="@null"
+                    android:inputType="text"/>
 
-
-            <ImageButton
-                android:id="@+id/send"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#082147"
-                android:contentDescription="@string/send"
-                android:src="@drawable/arrow_send"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"/>
-
+                <!-- Tombol Kirim -->
+                <ImageButton
+                    android:id="@+id/btnSendMessage"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/baseline_send_24"
+                    android:backgroundTint="#e9e9e9"
+                    android:contentDescription="Send"/>
+            </LinearLayout>
         </RelativeLayout>
 
+        <!-- Navigation Drawer -->
         <com.google.android.material.navigation.NavigationView
-            android:id="@+id/navigationView"
+            android:id="@+id/navView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"
@@ -83,9 +124,8 @@
                 <TextView
                     android:id="@+id/titleHistory"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:text="@string/history"
+                    android:layout_height="wrap_content"
+                    android:text="History"
                     android:textSize="24sp"
                     android:textStyle="bold"
                     android:gravity="center_vertical"
@@ -95,8 +135,8 @@
                     android:id="@+id/recyclerViewPreview"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="9"/>
-
+                    android:layout_weight="1"
+                    android:padding="8dp"/>
             </LinearLayout>
 
         </com.google.android.material.navigation.NavigationView>

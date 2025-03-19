@@ -3,5 +3,8 @@ package org.sabda.gpt.model
 data class ResourceData(
     val id: String,
     val title: String,
-    val imageResId: Int
+    val imageRes: Int,
+    val youtubeId: String,
+    val pdfUrl: String,
+    val deskripsi: String
 )

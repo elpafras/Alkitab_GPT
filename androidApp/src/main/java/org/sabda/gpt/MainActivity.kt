@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -33,7 +32,7 @@ import org.sabda.gpt.fragment.AIFragment
 import org.sabda.gpt.fragment.HomeFragment
 import org.sabda.gpt.utility.NetworkUtil
 import org.sabda.gpt.utility.NetworkUtil.NetworkChangeCallback
-import org.sabda.gpt.utility.ToastUtil
+import org.sabda.gpt.utility.showToast
 
 class MainActivity : AppCompatActivity(), NetworkChangeCallback {
 
@@ -198,7 +197,7 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
     }
 
     private fun setupNavBottom() {
-        binding.navBottom?.setOnItemSelectedListener { item: MenuItem ->
+        binding.navBottom.setOnItemSelectedListener { item: MenuItem ->
             val fragment: Fragment = when (item.itemId) {
                 R.id.home -> HomeFragment()
                 R.id.ai -> AIFragment()
@@ -220,20 +219,20 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
         val activeColor = ContextCompat.getColor(
             this, if (isNightMode) R.color.nav_active else R.color.nav_active
         )
-        binding.navBottom?.itemActiveIndicatorColor = ColorStateList.valueOf(activeColor)
+        binding.navBottom.itemActiveIndicatorColor = ColorStateList.valueOf(activeColor)
 
         val iconTextColor = ContextCompat.getColor(
             this, if (isNightMode) R.color.black else R.color.white
         )
-        binding.navBottom?.itemIconTintList = ColorStateList.valueOf(iconTextColor)
-        binding.navBottom?.itemTextColor = ColorStateList.valueOf(iconTextColor)
+        binding.navBottom.itemIconTintList = ColorStateList.valueOf(iconTextColor)
+        binding.navBottom.itemTextColor = ColorStateList.valueOf(iconTextColor)
     }
 
     private fun initializeNetwork() {
         isConnected = NetworkUtil.isNetworkAvailable(this)
         updateConnectionStatus(isConnected)
         if (!isConnected) {
-            ToastUtil.showToast(this,"")
+            applicationContext.showToast(getString(R.string.toast_offline))
         }
         NetworkUtil.registerNetworkChangeReceiver(
             this
@@ -247,13 +246,13 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
 
     private fun handleChildClick(selectedChild: String) {
         when (selectedChild) {
-            "Studi Alkitab" -> { openUrl("https://alkitab.sabda.org", "Situs: Studi Alkitab") }
+            "Studi Alkitab" -> { openUrl("https://alkitab.sabda.org/bible.php?book=Matius&chapter=1", "Situs: Studi Alkitab") }
             "Media Alkitab" -> { openUrl("https://sabda.id/badeno/", "Situs: Media Alkitab") }
             "Alkitab" -> { openApps("org.sabda.alkitab.action.VIEW", "org.sabda.alkitab") }
             "AlkiPEDIA" -> { openApps("org.sabda.pedia.action.VIEW", "org.sabda.pedia") }
             "Tafsiran" -> { openApps("org.sabda.tafsiran.action.VIEW", "org.sabda.tafsiran") }
             "Kamus Alkitab" -> { openApps("org.sabda.kamus.action.VIEW", "org.sabda.kamus") }
-            "Sabda Bot" -> { openUrl("https://t.me/sabdabot") }
+            "SABDA Bot" -> { openUrl("https://t.me/sabdabot") }
             "Lain-lain" -> { openUrl("https://play.google.com/store/apps/dev?id=4791022353258811724&hl=id") }
             "AI-4-Church & AI-4-GOD" -> { openUrl("https://chat.whatsapp.com/EkBAirjrEKK4wa31yqQb6b") }
         }
@@ -343,7 +342,7 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
         if (isConnected) {
             title?.let { NetworkUtil.openWebView(this, url, it) } ?: NetworkUtil.openUrl(this, url)
         } else {
-            ToastUtil.showToast(this,"")
+            applicationContext.showToast(getString(R.string.toast_offline))
         }
     }
 
@@ -351,7 +350,7 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
         this.isConnected = isConnected
 
         if (!isConnected) {
-            ToastUtil.showToast(this,"")
+            applicationContext.showToast(getString(R.string.toast_offline))
         }
     }
 

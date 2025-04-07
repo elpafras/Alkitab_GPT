@@ -5,31 +5,30 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
+import android.text.SpannableString
 import android.text.TextWatcher
+import android.text.style.ForegroundColorSpan
 import android.view.KeyEvent
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.PopupMenu
-import android.widget.Toast
-import androidx.core.view.isVisible
+import androidx.core.content.ContextCompat
+import androidx.core.view.get
+import androidx.core.view.size
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import org.sabda.gpt.AlkitabGPT
+import org.sabda.gpt.ChatActivity
 import org.sabda.gpt.Materi
 import org.sabda.gpt.R
 import org.sabda.gpt.adapter.ResourcesAdapter
 import org.sabda.gpt.databinding.FragmentHomeBinding
 import org.sabda.gpt.model.ResourceData
 import org.sabda.gpt.utility.NetworkUtil
-import org.sabda.gpt.utility.ToastUtil
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
-import androidx.core.content.ContextCompat
+import org.sabda.gpt.utility.showToast
 
 
 class HomeFragment : Fragment() {
@@ -47,6 +46,7 @@ class HomeFragment : Fragment() {
     private var autoScrollRunnable: Runnable? = null
     private var scrollPosition = 0
     private var isAutoScrolling = true
+    private var alreadySent = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,8 +54,12 @@ class HomeFragment : Fragment() {
     ): View? {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        setupRecyclerView()
-        setupListeners()
+        checkInternetAndProceed {
+            isConnected = true
+            setupRecyclerView()
+            setupListeners()
+        }
+
         setupAutoScroll()
 
         return binding.root
@@ -102,7 +106,7 @@ class HomeFragment : Fragment() {
     private fun setupAutoScroll() {
         autoScrollRunnable = Runnable {
             binding.horizontalRecyclerView.let { recyclerView ->
-                if (isAutoScrolling && recyclerView != null) {
+                if (isAutoScrolling) {
                     val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                     val itemCount = recyclerView.adapter?.itemCount ?: 0
 
@@ -164,16 +168,22 @@ class HomeFragment : Fragment() {
     }
 
     private fun handleSendButtonClick() {
+        if (alreadySent) return
+
         val inputText = binding.input.text.toString()
         when {
-            inputText.length < 5 -> showToast("Masukkan prompt minimal 5 karakter")
-            inputText.length > maxCharCount -> showToast("Maksimal 250 karakter")
+            inputText.length < 5 -> requireContext().showToast(getString(R.string.prompt_minus))
+            inputText.length > maxCharCount -> requireContext().showToast(getString(R.string.prompt_plus))
             isConnected -> {
                 if (selectedOption.isEmpty()) {
+                    alreadySent = true
+
                     // Jika OpenAI dipilih, buka AlkitabGPT
-                    startActivity(Intent(requireContext(), AlkitabGPT::class.java).apply {
+                    startActivity(Intent(requireContext(), ChatActivity::class.java).apply {
                         putExtra("inputtext", inputText)
+                        putExtra("START_NEW_CHAT", true)
                     })
+                    binding.input.text?.clear()
                 } else {
                     // Jika ChatGPT, Copilot, atau Meta, buka URL
                     val url = "https://gpt.sabda.org$selectedOption?t=$inputText"
@@ -181,7 +191,10 @@ class HomeFragment : Fragment() {
                 }
 
             }
-            else -> ToastUtil.showToast(requireContext(), getString(R.string.toast_offline))
+            else -> {
+                requireContext().showToast(getString(R.string.toast_offline))
+            }
+
         }
     }
 
@@ -200,8 +213,8 @@ class HomeFragment : Fragment() {
         // Fungsi untuk mewarnai item yang dipilih
         fun highlightMenuItem(itemId: Int) {
             val menu = popup.menu
-            for (i in 0 until menu.size()) {
-                val menuItem = menu.getItem(i)
+            for (i in 0 until menu.size) {
+                val menuItem = menu[i]
                 val spannable = SpannableString(menuItem.title)
                 if (menuItem.itemId == itemId) {
                     spannable.setSpan(ForegroundColorSpan(highlightColor), 0, spannable.length, 0)
@@ -247,7 +260,7 @@ class HomeFragment : Fragment() {
         if (isConnected) {
             title?.let { NetworkUtil.openWebView(requireContext(), url, it) } ?: NetworkUtil.openUrl(requireContext(), url)
         } else {
-            ToastUtil.showToast(requireContext(), getString(R.string.toast_offline))
+            requireContext().showToast(getString(R.string.toast_offline))
         }
     }
 
@@ -255,7 +268,7 @@ class HomeFragment : Fragment() {
         if (NetworkUtil.isNetworkAvailable(requireContext())){
             action()
         } else {
-            ToastUtil.showToast(requireContext(), getString(R.string.toast_offline))
+            requireContext().showToast(getString(R.string.toast_offline))
         }
     }
 
@@ -280,14 +293,11 @@ class HomeFragment : Fragment() {
         binding.characterCount.text = getString(R.string.cc, remaining)
     }
 
-    private fun showToast(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-    }
-
     override fun onResume() {
         super.onResume()
         // Mulai auto-scrolling saat fragment aktif
         startAutoScroll()
+        alreadySent = false
     }
 
     override fun onPause() {

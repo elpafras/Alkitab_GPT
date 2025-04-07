@@ -3,13 +3,18 @@ package org.sabda.gpt.broadcastservice
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import org.sabda.gpt.MainActivity
+import android.util.Log
+import org.sabda.gpt.SplashScreenActivity
 
 class AppBroadcastReceiver : BroadcastReceiver() {
-    var TAG: String = "AppBroadcastReceiver"
+    private val TAG = "AppBroadcastReceiver"
 
     override fun onReceive(context: Context, intent: Intent) {
+        Log.d(TAG, "onReceive - broadcast received")
+
         val action = intent.action
+
+        Log.d(TAG, "onReceive - cek action: $action")
 
         if ("org.sabda.gpt.PEDIA_BROADCAST" == action) {
             val input = intent.getStringExtra("input")
@@ -18,20 +23,22 @@ class AppBroadcastReceiver : BroadcastReceiver() {
             val lastChapter = intent.getIntExtra("lastChapter", 1)
 
 
-            /*Log.d(TAG, "Input: " + input);
-            Log.d(TAG, "Topic: " + topics);
-            Log.d(TAG, "LastBookName: " + lastBookName);
-            Log.d(TAG, "LastChapter: " + lastChapter);*/
-            val pediaIntent = Intent(context, MainActivity::class.java)
-            if (input != null || topics != null) {
-                pediaIntent.putExtra("inputPedia", input)
-                pediaIntent.putExtra("topic", topics)
-                pediaIntent.putExtra("lastBookName", lastBookName)
-                pediaIntent.putExtra("lastChapter", lastChapter)
+            Log.d(TAG, "Input: $input")
+            Log.d(TAG, "Topic: $topics")
+            Log.d(TAG, "LastBookName: $lastBookName")
+            Log.d(TAG, "LastChapter: $lastChapter")
+
+            val pediaIntent = Intent(context, SplashScreenActivity::class.java).apply {
+                putExtra("inputPedia", input)
+                putExtra("topic", topics)
+                putExtra("lastBookName", lastBookName)
+                putExtra("lastChapter", lastChapter)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
 
-            pediaIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(pediaIntent)
+        } else {
+            Log.e(TAG, "Broadcast tidak dikenali")
         }
     }
 }

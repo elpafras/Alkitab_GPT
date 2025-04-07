@@ -24,8 +24,10 @@ import org.sabda.gpt.utility.LoadingUtil
 import org.sabda.gpt.utility.NetworkUtil
 import org.sabda.gpt.utility.StatusBarUtil
 import java.util.Calendar
-import android.content.Context
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.withTimeout
 
 class ChatActivity : BaseActivity<ActivityChatBinding>(), AIFragment.ChatFragmentCallback {
 
@@ -43,6 +45,8 @@ class ChatActivity : BaseActivity<ActivityChatBinding>(), AIFragment.ChatFragmen
     private val chatPreview: MutableList<ChatbotData> = mutableListOf()
     private var currentChatId = System.currentTimeMillis()
     private var chatCounter = 1
+    private var isLoadingActive = false
+    private var sendMessageCounter = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,6 +79,34 @@ class ChatActivity : BaseActivity<ActivityChatBinding>(), AIFragment.ChatFragmen
 
         loadMessagesFromDatabase()
         loadChatPreviews()
+        startChatIfNeeded()
+
+
+    }
+
+    private fun startChatIfNeeded() {
+        val inputText = intent.getStringExtra("inputtext")
+        val isNewChat = intent.getBooleanExtra("START_NEW_CHAT", false)
+
+        Log.d("ChatActivity", "startChatIfNeeded called - isNewChat: $isNewChat, input: $inputText")
+
+        if (isNewChat && !inputText.isNullOrBlank()) {
+            if (!isLoadingActive) {
+                if (!isAlreadySent(inputText)) {
+                    Log.d("ChatActivity", "Triggering sendMessage from startChatIfNeeded")
+                    sendMessage(inputText)
+                    isLoadingActive = true
+                } else {
+                    Log.d("ChatActivity", "Skipped sendMessage: already sent")
+                }
+            } else {
+                Log.d("ChatActivity", "Skipped sendMessage: loading already active")
+            }
+        }
+    }
+
+    private fun isAlreadySent(inputText: String): Boolean {
+        return messageList.any { it.isSent && it.text.trim() == inputText.trim() }
     }
 
     private fun initDatabase() {
@@ -87,49 +119,13 @@ class ChatActivity : BaseActivity<ActivityChatBinding>(), AIFragment.ChatFragmen
         binding.btnSendMessage.setOnClickListener {
             Log.d("TAG", "setupButtons: clicked")
             val messageText = binding.editTextMessage.text.toString()
-            val prefs = getSharedPreferences("MessageLimitPrefs", Context.MODE_PRIVATE)
-            val currentDate = Calendar.getInstance().apply {
-                set(Calendar.HOUR_OF_DAY, 0)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-            }.timeInMillis
 
-            // Ambil jumlah pesan hari ini dari SharedPreferences
-            val lastResetDate = prefs.getLong("lastResetDate", 0)
-            var messageCount = prefs.getInt("messageCount", 0)
-
-            // Reset hitung jika sudah lewat tengah malam
-            if (lastResetDate < currentDate) {
-                messageCount = 0
-                prefs.edit {
-                    putLong("lastResetDate", currentDate)
-                    putInt("messageCount", 0)
-                }
+            if (messageText.isEmpty()) {
+                Toast.makeText(this, "Masukkan prompt anda", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
 
-            if (messageCount >= 20) {
-                // Tampilkan dialog batasan pesan
-                showMessageLimitDialog()
-            } else {
-                // Kirim pesan
-                sendMessage(messageText)
-                binding.editTextMessage.text.clear()
-                loadingUtil.showLoadingMessage(chatAdapter, messageList, currentChatId)
-
-                lifecycleScope.launch {
-                    val response = chatRepository.fetchChatResponse(messageText)
-                    response?.let {
-                        loadingUtil.hideLoadingMessage(chatAdapter, messageList)
-                        receiveMessage(it)
-                    }
-                }
-
-                // Tambah hitungan pesan
-                prefs.edit {
-                    putInt("messageCount", messageCount + 1)
-                }
-            }
+            sendMessage(messageText)
         }
 
         binding.btnHistory.setOnClickListener {
@@ -207,6 +203,15 @@ class ChatActivity : BaseActivity<ActivityChatBinding>(), AIFragment.ChatFragmen
     }
 
     private fun sendMessage(messageText: String) {
+        sendMessageCounter++
+        Log.d("SendMessageDebug", "sendMessage() called $sendMessageCounter times")
+
+        if (!NetworkUtil.isNetworkAvailable(this)) {
+            NetworkUtil.showNoInternetDialog(this)
+            return
+        }
+
+        val prefs = getSharedPreferences("MessageLimitPrefs", MODE_PRIVATE)
         val currentDate = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
@@ -214,45 +219,72 @@ class ChatActivity : BaseActivity<ActivityChatBinding>(), AIFragment.ChatFragmen
             set(Calendar.MILLISECOND, 0)
         }.timeInMillis
 
-        // Ambil jumlah pesan hari ini dari SharedPreferences
-        val prefs = getSharedPreferences("MessageLimitPrefs", Context.MODE_PRIVATE)
-        val lastResetDate = prefs.getLong("lastResetDate", 0)
         var messageCount = prefs.getInt("messageCount", 0)
+        val lastResetDate = prefs.getLong("lastResetDate", 0)
 
-        // Reset hitung jika sudah lewat tengah malam
         if (lastResetDate < currentDate) {
-            messageCount = 0
             prefs.edit {
                 putLong("lastResetDate", currentDate)
                 putInt("messageCount", 0)
             }
+            messageCount = 0
         }
 
-        // Cek jumlah pesan
         if (messageCount >= 20) {
             showMessageLimitDialog()
             return
         }
 
-        if (!NetworkUtil.isNetworkAvailable(this)) {
-            NetworkUtil.showNoInternetDialog(this)
-            return
-        }
-
+        // Tampilkan pesan pengguna
         val newMessage = ChatbotData(messageText, true, currentChatId, timestamp = System.currentTimeMillis(), chatCounter)
         messageList.add(newMessage)
         chatAdapter.notifyItemInserted(messageList.lastIndex)
         binding.recyclerView.scrollToPosition(messageList.lastIndex)
+        chatCounter++
 
-        // Tambah hitungan pesan
-        prefs.edit {
-            putInt("messageCount", messageCount + 1)
-        }
+        prefs.edit { putInt("messageCount", messageCount + 1) }
 
         lifecycleScope.launch(Dispatchers.IO) {
             messageDao.insertChat(newMessage)
         }
-        chatCounter++
+
+        // Tampilkan loading bubble
+        loadingUtil.showLoadingMessage(chatAdapter, messageList, currentChatId)
+        isLoadingActive = true
+
+        // Mulai request AI dengan timeout
+        lifecycleScope.launch {
+            try {
+                val response = withTimeout(60_000) {
+                    chatRepository.fetchChatResponse(messageText)
+                }
+
+                loadingUtil.hideLoadingMessage(chatAdapter, messageList)
+                isLoadingActive = false
+
+                if (response.isNullOrBlank()) {
+                    loadingUtil.hideLoadingMessage(chatAdapter, messageList)
+                    addErrorBubble("⚠️ AI tidak memberikan respon. Coba lagi nanti.")
+                    showEmptyResponseAlert()
+                } else {
+                    receiveMessage(response)
+                }
+            } catch (_: TimeoutCancellationException) {
+                loadingUtil.hideLoadingMessage(chatAdapter, messageList)
+                isLoadingActive = false
+                Log.e("ChatActivity", "Timeout: AI tidak merespon dalam 60 detik")
+                addErrorBubble("⏰ Timeout: AI tidak merespon. Coba kirim ulang.")
+                showEmptyResponseAlert()
+            } catch (e: Exception) {
+                loadingUtil.hideLoadingMessage(chatAdapter, messageList)
+                isLoadingActive = false
+                Log.e("ChatActivity", "Error saat fetch response: ${e.message}")
+                addErrorBubble("❌ Terjadi kesalahan saat menghubungi AI.")
+                showEmptyResponseAlert()
+            }
+        }
+
+        binding.editTextMessage.text.clear()
     }
 
     private fun receiveMessage(response: String) {
@@ -288,7 +320,7 @@ class ChatActivity : BaseActivity<ActivityChatBinding>(), AIFragment.ChatFragmen
 
         AlertDialog.Builder(this)
             .setTitle("Pesan Terbatas")
-            .setMessage("Anda telah mencapai batas maksimal 20 pesan hari ini. Silakan coba lagi dalam ${hours} jam ${minutes} menit.")
+            .setMessage("Anda telah mencapai batas maksimal 20 pesan hari ini. Silakan coba lagi dalam $hours jam $minutes menit.")
             .setNegativeButton("Tutup") { dialog, _ ->
                 dialog.dismiss()
             }
@@ -357,6 +389,35 @@ class ChatActivity : BaseActivity<ActivityChatBinding>(), AIFragment.ChatFragmen
             chatAdapter.notifyDataSetChanged()
             binding.recyclerView.scrollToPosition(messageList.size - 1)
         }
+    }
+
+    private fun addErrorBubble(message: String) {
+        val errorMessage = ChatbotData(
+            text = message,
+            isSent = false,
+            chatId = currentChatId,
+            timestamp = System.currentTimeMillis(),
+            counter = chatCounter
+        )
+
+        messageList.add(errorMessage)
+        chatAdapter.notifyItemInserted(messageList.lastIndex)
+        binding.recyclerView.scrollToPosition(messageList.lastIndex)
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            messageDao.insertChat(errorMessage)
+        }
+    }
+
+    private fun showEmptyResponseAlert() {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.no_response_title))
+            .setMessage(getString(R.string.no_response))
+            .setPositiveButton("Oke") { dialog, _ ->
+                dialog.dismiss()
+                binding.editTextMessage.requestFocus()
+            }
+            .show()
     }
 
     private fun saveCurrentChatId(chatId: Long) {

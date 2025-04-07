@@ -2,8 +2,6 @@ package org.sabda.gpt.utility
 
 import android.os.Handler
 import android.os.Looper
-import android.view.View
-import android.widget.TextView
 import org.sabda.gpt.adapter.ChatAdapter
 import org.sabda.gpt.model.ChatbotData
 
@@ -11,58 +9,44 @@ class LoadingUtil {
 
     private val handler = Handler(Looper.getMainLooper())
     private var loadingIndex: Int = -1
-    private val loadingMessages = arrayOf("Loading.", "Loading..", "Loading...")
+    private var countdownRunnable: Runnable? = null
+    private var remainingSeconds = 60
 
     fun showLoadingMessage(chatAdapter: ChatAdapter, messageList: MutableList<ChatbotData>, chatId: Long) {
-        startLoadingAnimation(
-            onUpdate = { index ->
-                if (loadingIndex == -1) {
-                    messageList.add( ChatbotData(loadingMessages[index], false, chatId, System.currentTimeMillis(), 0 ) )
-                    loadingIndex = messageList.size - 1
-                    chatAdapter.notifyItemInserted(loadingIndex)
-                } else {
-                    messageList[loadingIndex].text = loadingMessages[index]
+        stopCountdown() // make sure previous one is stopped
+        remainingSeconds = 60
+
+        val initialMessage = ChatbotData("⏳ Tunggu sebentar... (60)", false, chatId, System.currentTimeMillis(), 0)
+        messageList.add(initialMessage)
+        loadingIndex = messageList.size - 1
+        chatAdapter.notifyItemInserted(loadingIndex)
+
+        countdownRunnable = object : Runnable {
+            override fun run() {
+                if (remainingSeconds > 0) {
+                    val msg = "⏳ Tunggu sebentar... ($remainingSeconds)"
+                    messageList[loadingIndex].text = msg
                     chatAdapter.notifyItemChanged(loadingIndex)
+                    remainingSeconds--
+                    handler.postDelayed(this, 1000)
                 }
             }
-        )
+        }
+
+        handler.post(countdownRunnable!!)
     }
 
     fun hideLoadingMessage(chatAdapter: ChatAdapter, messageList: MutableList<ChatbotData>) {
-        if (loadingIndex != -1) {
+        if (loadingIndex != -1 && loadingIndex < messageList.size) {
             messageList.removeAt(loadingIndex)
             chatAdapter.notifyItemRemoved(loadingIndex)
             loadingIndex = -1
         }
-        stopLoadingAnimation()
+        stopCountdown()
     }
 
-    fun showLoadingView(loadingTextView: View) {
-        if (loadingTextView is TextView) {
-            loadingTextView.visibility = View.VISIBLE
-            startLoadingAnimation(
-                onUpdate = { index -> loadingTextView.text = loadingMessages[index] }
-            )
-        }
-    }
-
-    fun hideLoadingView(loadingTextView: View) {
-        loadingTextView.visibility = View.GONE
-        stopLoadingAnimation()
-    }
-
-    private fun startLoadingAnimation(onUpdate: (index: Int) -> Unit) {
-        handler.post(object : Runnable {
-            var index = 0
-            override fun run() {
-                onUpdate(index)
-                index = (index + 1) % loadingMessages.size
-                handler.postDelayed(this, 500)
-            }
-        })
-    }
-
-    private fun stopLoadingAnimation() {
+    private fun stopCountdown() {
         handler.removeCallbacksAndMessages(null)
+        countdownRunnable = null
     }
 }

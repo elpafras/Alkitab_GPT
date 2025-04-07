@@ -11,7 +11,7 @@ import com.github.chrisbanes.photoview.PhotoView
 import org.sabda.gpt.databinding.ActivitySelengkapnyaBinding
 import org.sabda.gpt.utility.NetworkUtil
 import org.sabda.gpt.utility.NetworkUtil.NetworkChangeCallback
-import org.sabda.gpt.utility.ToastUtil
+import org.sabda.gpt.utility.showToast
 import java.util.Objects
 
 class Selengkapnya : AppCompatActivity(), NetworkChangeCallback {
@@ -126,19 +126,11 @@ class Selengkapnya : AppCompatActivity(), NetworkChangeCallback {
     }
 
     private fun handleClick(url: String, title: String) {
-        if (isConnected) {
-            NetworkUtil.openWebView(this, url, title)
-        } else {
-            ToastUtil.showToast(this,"")
-        }
+        if (isConnected) NetworkUtil.openWebView(this, url, title) else applicationContext.showToast(getString(R.string.toast_offline))
     }
 
     private fun handleYoutubeClick(videoId: String, startTime: Int) {
-        if (isConnected) {
-            showYoutube(videoId, startTime)
-        } else {
-            ToastUtil.showToast(this,"")
-        }
+        if (isConnected) showYoutube(videoId, startTime) else applicationContext.showToast(getString(R.string.toast_offline))
     }
 
     private fun showYoutube(videoId: String, startTime: Int) {
@@ -189,9 +181,7 @@ class Selengkapnya : AppCompatActivity(), NetworkChangeCallback {
 
         buttons.forEach { it.isEnabled = isConnected }
 
-        if (!isConnected) {
-            ToastUtil.showToast(this,"")
-        }
+        if (!isConnected) applicationContext.showToast(getString(R.string.toast_offline))
     }
 
     override fun onNetworkChange(isConnected: Boolean) {

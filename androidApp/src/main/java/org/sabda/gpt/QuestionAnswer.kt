@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import org.sabda.gpt.adapter.CustomExpandableListAdapter
 import org.sabda.gpt.utility.NetworkUtil
-import org.sabda.gpt.utility.ToastUtil
+import org.sabda.gpt.utility.showToast
 
 class QuestionAnswer : AppCompatActivity() {
     private lateinit var exp: ExpandableListView
@@ -64,10 +64,7 @@ class QuestionAnswer : AppCompatActivity() {
 
     private fun updateConnectionStatus(isConnected: Boolean) {
         this.isConnected = isConnected
-
-        if (!isConnected) {
-            ToastUtil.showToast(this,"")
-        }
+        if (!isConnected) applicationContext.showToast(getString(R.string.toast_offline))
     }
 
     private fun createHeaders(): List<String> {

@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import org.sabda.gpt.databinding.ActivityAlkitabGptBinding
 import org.sabda.gpt.utility.NetworkUtil
 import org.sabda.gpt.utility.NetworkUtil.NetworkChangeCallback
-import org.sabda.gpt.utility.ToastUtil
+import org.sabda.gpt.utility.showToast
 
 class AlkitabGPT : AppCompatActivity(), NetworkChangeCallback {
     private lateinit var binding: ActivityAlkitabGptBinding
@@ -89,7 +89,7 @@ class AlkitabGPT : AppCompatActivity(), NetworkChangeCallback {
 
     private fun updateConnectionStatus(isConnected: Boolean) {
         this.isConnected = isConnected
-        if (!isConnected) ToastUtil.showToast(this,"")
+        if (!isConnected) applicationContext.showToast(getString(R.string.toast_offline))
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -11,7 +11,7 @@ import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
 import org.sabda.gpt.AlkitabGPT
-import org.sabda.gpt.MainActivity
+import org.sabda.gpt.R
 
 object NetworkUtil {
     private var broadcastReceiver: BroadcastReceiver? = null
@@ -60,9 +60,7 @@ object NetworkUtil {
             override fun onReceive(context: Context, intent: Intent) {
                 val isConnected = isNetworkAvailable(context)
                 callback(isConnected)
-                if (!isConnected) {
-                    ToastUtil.showToast(context, "")
-                }
+                if (!isConnected) context.showToast(context.getString(R.string.toast_offline))
             }
         }
 

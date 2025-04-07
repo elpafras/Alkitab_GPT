@@ -8,7 +8,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.Abs
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 import org.sabda.gpt.utility.NetworkUtil
 import org.sabda.gpt.utility.NetworkUtil.NetworkChangeCallback
-import org.sabda.gpt.utility.ToastUtil
+import org.sabda.gpt.utility.showToast
 
 class YoutubePlayer : AppCompatActivity(), NetworkChangeCallback {
     private var isConnected: Boolean = false
@@ -46,9 +46,7 @@ class YoutubePlayer : AppCompatActivity(), NetworkChangeCallback {
     private fun updateConnectionStatus(isConnected: Boolean) {
         this.isConnected = isConnected
 
-        if (!isConnected) {
-            ToastUtil.showToast(this,"")
-        }
+        if (!isConnected) applicationContext.showToast(getString(R.string.toast_offline))
     }
 
     override fun onDestroy() {

@@ -16,7 +16,7 @@ class SplashScreenActivity : AppCompatActivity() {
         // Pastikan aplikasi membaca intent terbaru
         Handler(Looper.getMainLooper()).postDelayed({
             handleIntent(intent)
-        }, 1500L)
+        }, 2000L)
     }
 
     private fun handleIntent(intent: Intent?) {
@@ -34,18 +34,18 @@ class SplashScreenActivity : AppCompatActivity() {
         // Pastikan hanya membuka AlkitabGPT jika ada data valid
         if (!inputPedia.isNullOrEmpty() || !topic.isNullOrEmpty()) {
             Log.d(TAG, "Valid data detected, proceeding to AlkitabGPT")
-            proceedToAlkitabGPT(intent)
+            proceedToChatActivity(intent)
         } else {
             Log.d(TAG, "No valid data found, proceeding to MainActivity")
             proceedToMainActivity()
         }
     }
 
-    private fun proceedToAlkitabGPT(intent: Intent) {
-        val alkitabGPTIntent = Intent(this, AlkitabGPT::class.java).apply {
+    private fun proceedToChatActivity(intent: Intent) {
+        val chatIntent = Intent(this, ChatActivity::class.java).apply {
             putExtras(intent.extras ?: Bundle()) // Pastikan extras tidak null
         }
-        startActivity(alkitabGPTIntent)
+        startActivity(chatIntent)
         finish()
     }
 

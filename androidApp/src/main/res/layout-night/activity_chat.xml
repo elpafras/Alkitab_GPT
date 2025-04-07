@@ -22,16 +22,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/white"
-                android:elevation="4dp"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp">
+                    android:gravity="center_vertical">
 
                     <!-- Tombol History -->
                     <ImageView
@@ -43,7 +40,7 @@
 
                     <!-- Judul Chat -->
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="Alkitab GPT"
                         android:textColor="@color/black"
@@ -57,6 +54,7 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:contentDescription="newchat"
+                        android:layout_marginEnd="15dp"
                         android:src="@drawable/baseline_edit_square_24"/>
                 </LinearLayout>
             </androidx.appcompat.widget.Toolbar>

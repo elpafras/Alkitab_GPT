@@ -27,14 +27,14 @@
         tools:targetApi="31">
         <activity
             android:name=".ChatActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".QuestionAnswer"
             android:exported="false" />
 
         <service
             android:name=".broadcastservice.AppService"
-            android:exported="false"
+            android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <receiver
@@ -43,7 +43,6 @@
             android:permission="org.sabda.gpt.PEDIA_BROADCAST_KEY">
             <intent-filter>
                 <action android:name="org.sabda.gpt.PEDIA_BROADCAST" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>

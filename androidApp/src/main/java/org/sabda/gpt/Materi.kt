@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import org.sabda.gpt.databinding.ActivityMateriBinding
 import org.sabda.gpt.utility.NetworkUtil
 import org.sabda.gpt.utility.NetworkUtil.NetworkChangeCallback
-import org.sabda.gpt.utility.ToastUtil
 import android.webkit.WebChromeClient
 import org.sabda.gpt.adapter.MateriPagerAdapter
 import androidx.viewpager2.widget.ViewPager2
@@ -20,6 +19,7 @@ import android.view.View
 import android.os.Handler
 import android.os.Looper
 import android.widget.LinearLayout
+import org.sabda.gpt.utility.showToast
 
 class Materi : AppCompatActivity(), NetworkChangeCallback {
     private lateinit var progressBar: ProgressBar
@@ -48,7 +48,7 @@ class Materi : AppCompatActivity(), NetworkChangeCallback {
 
         // Cek koneksi internet sebelum memuat materi
         if (!NetworkUtil.isNetworkAvailable(this)) {
-            ToastUtil.showToast(this, "Tidak ada koneksi internet!")
+            applicationContext.showToast(getString(R.string.toast_offline))
             progressBar.visibility = View.GONE
             return
         }
@@ -149,7 +149,7 @@ class Materi : AppCompatActivity(), NetworkChangeCallback {
 
     private fun updateConnectionStatus(isConnected: Boolean) {
         if (!isConnected) {
-            ToastUtil.showToast(this,"")
+            applicationContext.showToast(getString(R.string.toast_offline))
         }
     }
 

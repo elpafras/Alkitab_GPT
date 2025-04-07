@@ -43,7 +43,7 @@
     <string name="alkipedia">AlkiPEDIA</string>
     <string name="tafsiran">Tafsiran</string>
     <string name="kamus_alkitab">Kamus Alkitab</string>
-    <string name="bot">Sabda Bot</string>
+    <string name="bot">SABDA Bot</string>
     <string name="lain">Lain-lain</string>
     <string name="studi_alkitab">Studi Alkitab</string>
     <string name="alkitab_media">Media Alkitab</string>
@@ -97,7 +97,7 @@
     <string name="answer13">J: Tentu. Informasi ini dapat dibagikan kepada siapa pun supaya setiap anak Tuhan dapat menggunakannya sebagai salah satu referensi untuk studi Alkitab.</string>
     <string name="answer14">J: Silakan kontak Yayasan Lembaga SABDA melalui WA: 08812979100 atau email di ylsa@sabda.org .</string>
     <string name="answer15">J: Ya. Aplikasi ini akan terus di-update/dikembangkan oleh Yayasan Lembaga SABDA.</string>
-    <!-- TODO: Remove or change this placeholder text -->
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="logo">logo</string>
     <string name="home">Home</string>
@@ -116,4 +116,10 @@
     <string name="teksartikelmetode_ai_squared">Tahun baru 2024 akan lanjut membawa perubahan, terkhusus dengan penetrasi teknologi AI yang semakin meluas di semua bidang kehidupan. Bagaimana dengan cara kita mempelajari Alkitab? SABDA mengajak Sahabat SABDA untuk belajar cara baru yang fun dan menarik dalam melakukan PA. Untuk itu, mari bergabung dalam acara seri go-AI! yang berjudul "PA dengan AI: Cara AI2 (AI Squared)".</string>
     <string name="teksartikelmetode_f_o_k_u_s">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tincidunt turpis in risus egestas,</string>
     <string name="teksartikelbible_gpt">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tincidunt turpis in risus egestas,</string>
+
+    <!--Alert Text & Title-->
+    <string name="prompt_minus">Masukkan prompt minimal 5 karakter</string>
+    <string name="prompt_plus">Maksimal 250 karakter</string>
+    <string name="no_response">AI tidak memberikan jawaban. Silakan coba lagi dalam beberapa saat.</string>
+    <string name="no_response_title">Tidak ada respon</string>
 </resources>

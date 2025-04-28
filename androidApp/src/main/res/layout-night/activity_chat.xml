@@ -21,7 +21,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="@color/white"
+                android:background="@color/gray_dark_toolbar"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
                 <LinearLayout
@@ -30,25 +30,30 @@
                     android:orientation="horizontal"
                     android:gravity="center_vertical">
 
-                    <!-- Tombol History -->
                     <ImageView
                         android:id="@+id/btnHistory"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:contentDescription="@string/send"
-                        android:src="@drawable/notes"/>
+                        android:src="@drawable/noteswhite"/>
 
-                    <!-- Judul Chat -->
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="Alkitab GPT"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white_dark_tc"
                         android:textSize="20sp"
                         android:layout_marginStart="16dp"
                         android:layout_weight="1"/>
 
-                    <!-- Tombol Chat Baru -->
+                    <ImageView
+                        android:id="@+id/home"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:contentDescription="home"
+                        android:layout_marginEnd="10dp"
+                        android:src="@drawable/baseline_home_24"/>
+
                     <ImageView
                         android:id="@+id/newChatImageView"
                         android:layout_width="30dp"
@@ -79,7 +84,7 @@
                 android:orientation="horizontal"
                 android:padding="8dp"
                 android:background="@drawable/rounded_corner"
-                android:backgroundTint="#e9e9e9"
+                android:backgroundTint="@color/white_dark_tc"
                 android:elevation="4dp">
 
                 <!-- EditText untuk Input Pesan -->
@@ -88,7 +93,7 @@
                     android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:hint="Type a message"
+                    android:hint="@string/hint"
                     android:textColorHint="#919191"
                     android:textColor="@color/black"
                     android:padding="10dp"
@@ -100,7 +105,7 @@
                     android:layout_height="50dp"
                     android:layout_marginStart="8dp"
                     android:src="@drawable/baseline_send_24"
-                    android:backgroundTint="#e9e9e9"
+                    android:backgroundTint="@color/white_dark_tc"
                     android:contentDescription="Send"/>
 
                 <!-- Tombol Kirim -->

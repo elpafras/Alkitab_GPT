@@ -1,19 +1,27 @@
 package org.sabda.gpt.adapter
 
+import android.text.Html
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import org.sabda.gpt.model.ChatbotData
 import org.sabda.gpt.R
+import org.sabda.gpt.model.ChatMessage
+import org.sabda.gpt.utility.HtmlUtil
 
-class ChatAdapter(private val messageData: List<ChatbotData> ) :
+class ChatAdapter(private val messageData: List<ChatMessage> ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object{
         const val TYPE_SENT = 1
         const val TYPE_RECEIVED = 2
+
+        private fun stripHtml(html: String): String {
+            val cleanText = Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY).toString()
+            return cleanText.replace(Regex("\\s+"), " ").trim()
+        }
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -21,23 +29,18 @@ class ChatAdapter(private val messageData: List<ChatbotData> ) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == TYPE_SENT) {
-            val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_send, parent, false)
-            SentViewHolder(view)
-        } else {
-            val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_receive, parent, false)
-            ReceiveViewHolder(view)
+        val inflater = LayoutInflater.from(parent.context)
+        return when (viewType) {
+            TYPE_SENT -> SentViewHolder(inflater.inflate(R.layout.item_send, parent, false))
+            else -> ReceiveViewHolder(inflater.inflate(R.layout.item_receive, parent, false))
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val message = messageData[position]
-        if (holder is SentViewHolder) {
-            holder.textViewMessage.text = message.text
-        } else if (holder is ReceiveViewHolder) {
-            holder.textViewMessage1.text = message.text
+        when (holder) {
+            is SentViewHolder -> holder.bind(message)
+            is ReceiveViewHolder -> holder.bind(message)
         }
     }
 
@@ -45,10 +48,19 @@ class ChatAdapter(private val messageData: List<ChatbotData> ) :
 
 
     class SentViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val textViewMessage: TextView = view.findViewById(R.id.textViewMessage)
+        private val textViewMessage: TextView = view.findViewById(R.id.textViewMessage)
+
+        fun bind(data: ChatMessage) {
+            textViewMessage.text = data.text
+        }
     }
 
     class ReceiveViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val textViewMessage1: TextView = view.findViewById(R.id.textViewMessageReceive)
+        private val textViewMessage: TextView = view.findViewById(R.id.textViewMessageReceive)
+
+        fun bind(data: ChatMessage) {
+            textViewMessage.text = stripHtml(HtmlUtil.replaceSpecificTags(data.text).toString())
+            Log.d("chatadapter", "bind - received message edited: ${textViewMessage.text} ")
+        }
     }
 }

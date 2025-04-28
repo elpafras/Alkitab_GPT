@@ -18,7 +18,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white">
+            android:background="@color/gray_dark_toolbar">
 
             <ImageView
                 android:id="@+id/back"
@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/app_name"
                 android:textSize="20sp"
-                android:textColor="@color/black"/>
+                android:textColor="@color/white_dark_tc"/>
         </androidx.appcompat.widget.Toolbar>
 
         <!-- Konten Utama -->

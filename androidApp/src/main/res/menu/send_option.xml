@@ -3,7 +3,7 @@
     <group>
         <item
             android:id="@+id/openai"
-            android:title="ChatGPT"/>
+            android:title="@string/app_name"/>
         <item
             android:id="@+id/chatgpt"
             android:title="@string/wa_chatgpt"/>

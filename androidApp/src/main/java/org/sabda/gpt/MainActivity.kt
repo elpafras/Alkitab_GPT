@@ -217,12 +217,12 @@ class MainActivity : AppCompatActivity(), NetworkChangeCallback {
         val isNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
 
         val activeColor = ContextCompat.getColor(
-            this, if (isNightMode) R.color.nav_active else R.color.nav_active
+            this, if (isNightMode) R.color.night_nav_active else R.color.nav_active
         )
         binding.navBottom.itemActiveIndicatorColor = ColorStateList.valueOf(activeColor)
 
         val iconTextColor = ContextCompat.getColor(
-            this, if (isNightMode) R.color.black else R.color.white
+            this, R.color.white
         )
         binding.navBottom.itemIconTintList = ColorStateList.valueOf(iconTextColor)
         binding.navBottom.itemTextColor = ColorStateList.valueOf(iconTextColor)

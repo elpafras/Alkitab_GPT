@@ -1,28 +1,36 @@
 package org.sabda.gpt.fragment
 
 import android.content.Intent
+import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
-import android.text.SpannableString
 import android.text.TextWatcher
-import android.text.style.ForegroundColorSpan
+import android.util.Log
+import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.LayoutInflater
+import android.view.MenuInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
+import android.widget.LinearLayout
 import android.widget.PopupMenu
+import android.widget.PopupWindow
+import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.get
 import androidx.core.view.size
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import org.sabda.gpt.ChatActivity
-import org.sabda.gpt.Materi
 import org.sabda.gpt.R
 import org.sabda.gpt.adapter.ResourcesAdapter
 import org.sabda.gpt.databinding.FragmentHomeBinding
@@ -40,6 +48,8 @@ class HomeFragment : Fragment() {
     var maxCharCount: Int = 250
     private var isConnected: Boolean = false
     private var selectedOption: String = ""
+
+    private var popupWindow: PopupWindow? = null
 
     // Auto-scroll variables
     private val autoScrollHandler = Handler(Looper.getMainLooper())
@@ -75,30 +85,22 @@ class HomeFragment : Fragment() {
         )
 
         binding.horizontalRecyclerView.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
-        binding.horizontalRecyclerView.adapter = ResourcesAdapter(resourceList) { resource ->
-            val intent = Intent(requireContext(), Materi::class.java)
-            intent.putExtra("TITLE", resource.title)
-            intent.putExtra("YOUTUBE_ID", resource.youtubeId)
-            intent.putExtra("PDF_URL", resource.pdfUrl)
-            startActivity(intent)
-        }
+        binding.horizontalRecyclerView.adapter = ResourcesAdapter(resourceList)
+
+        val snapHelper = LinearSnapHelper()
+        snapHelper.attachToRecyclerView(binding.horizontalRecyclerView)
 
         // Tambahkan listener untuk mendeteksi sentuhan pengguna pada RecyclerView
         binding.horizontalRecyclerView.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
             override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
                 when (e.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        stopAutoScroll()
-                    }
-                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                        startAutoScroll()
-                    }
+                    MotionEvent.ACTION_DOWN -> stopAutoScroll()
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> startAutoScroll()
                 }
                 return false
             }
 
             override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {}
-
             override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
         })
     }
@@ -107,7 +109,7 @@ class HomeFragment : Fragment() {
         autoScrollRunnable = Runnable {
             binding.horizontalRecyclerView.let { recyclerView ->
                 if (isAutoScrolling) {
-                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                    recyclerView.layoutManager as LinearLayoutManager
                     val itemCount = recyclerView.adapter?.itemCount ?: 0
 
                     if (itemCount > 0) {
@@ -146,7 +148,7 @@ class HomeFragment : Fragment() {
             input.setOnEditorActionListener { _, actionId, _ -> handleEditorAction(actionId) }
             input.setOnKeyListener { _, keyCode, event -> handleEnterKey(keyCode, event) }
             send.setOnClickListener { handleSendButtonClick() }
-            option.setOnClickListener { showPopUp2(it) }
+            modelSource.setOnClickListener { showPopUp(it) }
             alkitabGPT.setOnClickListener { openUrl("https://chatgpt.com/g/g-QjHkF2IEk-alkitab-gpt-bible-man") }
         }
     }
@@ -203,57 +205,82 @@ class HomeFragment : Fragment() {
         openUrl("https://gpt.sabda.org/chat.php?t=$inputText")
     }
 
-    private fun showPopUp2(v: View) {
-        val popup = PopupMenu(requireContext(), v)
-        popup.menuInflater.inflate(R.menu.send_option, popup.menu)
+    private fun showPopUp(v: View) {
+        val context = requireContext()
+
+        val isNightMode = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+        Log.d("ThemeCheck", "Night mode aktif? $isNightMode")
+
+        val popupMenu = PopupMenu(context, v)
+        MenuInflater(context).inflate(R.menu.send_option, popupMenu.menu)
+        val menu = popupMenu.menu
+
+        if (menu.size == 0) return
+
+        val layout = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setBackgroundColor(Color.TRANSPARENT)
+            setPadding(16, 16, 16, 16)
+        }
 
         val highlightColor = ContextCompat.getColor(requireContext(), R.color.highlight_color)
         val defaultColor = ContextCompat.getColor(requireContext(), R.color.default_text_color)
+        val selectedColor = ContextCompat.getColor(requireContext(), R.color.grey)
 
-        // Fungsi untuk mewarnai item yang dipilih
-        fun highlightMenuItem(itemId: Int) {
-            val menu = popup.menu
-            for (i in 0 until menu.size) {
-                val menuItem = menu[i]
-                val spannable = SpannableString(menuItem.title)
-                if (menuItem.itemId == itemId) {
-                    spannable.setSpan(ForegroundColorSpan(highlightColor), 0, spannable.length, 0)
-                } else {
-                    spannable.setSpan(ForegroundColorSpan(defaultColor), 0, spannable.length, 0)
+        for (i in 0 until menu.size) {
+            val item = menu[i]
+
+            val itemView = TextView(context).apply {
+                text = item.title
+                setPadding(24, 16, 24, 16)
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+                setTextColor(if (item.itemId == selectedItemId) highlightColor else defaultColor)
+                setBackgroundColor(
+                    if (item.itemId == selectedItemId) selectedColor else Color.TRANSPARENT
+                )
+                isClickable = true
+                isFocusable = true
+                setOnClickListener {
+                    selectedItemId = item.itemId
+                    binding.source.text = item.title
+                    selectedOption = when (item.itemId) {
+                        R.id.chatgpt -> "/wa/openai.php"
+                        R.id.copilot -> "/wa/copilot.php"
+                        R.id.meta -> "/wa/meta.php"
+                        else -> ""
+                    }
+                    popupWindow?.dismiss()
                 }
-                menuItem.title = spannable
             }
+
+            // Optional: separator line antar item
+            if (i > 0) {
+                val divider = View(context).apply {
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        1
+                    )
+                    setBackgroundColor(ContextCompat.getColor(context, android.R.color.darker_gray))
+                }
+                layout.addView(divider)
+            }
+
+            layout.addView(itemView)
         }
 
-        // Set warna awal untuk item yang sebelumnya dipilih
-        highlightMenuItem(selectedItemId)
-
-        popup.setOnMenuItemClickListener { item ->
-            selectedItemId = item.itemId  // Simpan item yang dipilih
-            highlightMenuItem(selectedItemId)  // Update warna teks yang dipilih
-
-            when (item.itemId) {
-                R.id.openai -> {
-                    selectedOption = ""
-                    binding.source.text = "ChatGPT"
-                }
-                R.id.chatgpt -> {
-                    selectedOption = "/wa/openai.php"
-                    binding.source.text = getString(R.string.wa_chatgpt)
-                }
-                R.id.copilot -> {
-                    selectedOption = "/wa/copilot.php"
-                    binding.source.text = getString(R.string.wa_copilot)
-                }
-                R.id.meta -> {
-                    selectedOption = "/wa/meta.php"
-                    binding.source.text = getString(R.string.wa_meta)
-                }
-            }
+        popupWindow = PopupWindow(
+            layout,
+            v.width,
+            WindowManager.LayoutParams.WRAP_CONTENT,
             true
+        ).apply {
+            elevation = 10f
+            setBackgroundDrawable(Color.BLACK.toDrawable())
+            isOutsideTouchable = true
+            isFocusable = true
         }
 
-        popup.show()
+        popupWindow?.showAsDropDown(v)
     }
 
     private fun openUrl(url: String, title: String? = null) {
@@ -311,6 +338,8 @@ class HomeFragment : Fragment() {
         // Membersihkan runnable untuk menghindari memory leak
         autoScrollHandler.removeCallbacks(autoScrollRunnable!!)
         _binding = null
+        popupWindow?.dismiss()
+        popupWindow = null
     }
 
     companion object {

@@ -1,5 +1,6 @@
 package org.sabda.gpt.adapter
 
+import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
@@ -12,8 +13,7 @@ import org.sabda.gpt.R
 import org.sabda.gpt.model.ResourceData
 
 class ResourcesAdapter(
-    private val resourceList: List<ResourceData>,
-    private val onItemClick: (ResourceData) -> Unit
+    private val resourceList: List<ResourceData>
 ) : RecyclerView.Adapter<ResourcesAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -24,27 +24,19 @@ class ResourcesAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val resource = resourceList[position]
+        val context = holder.itemView.context
+
         holder.title.text = resource.title
         holder.image.setImageResource(resource.imageRes)
 
-        val context = holder.itemView.context
-
-        val deskripsi = when (resource.title) {
-            "Seminar: AI & Alkitab" -> context.getString(R.string.teksartikelaidanalkitab)
-            "Seminar: Alkitab GPT" -> context.getString(R.string.teksartikelalkitab_gpt)
-            "Metode AI Squared" -> context.getString(R.string.teksartikelmetode_ai_squared)
-            "Metode F.O.K.U.S." -> context.getString(R.string.teksartikelmetode_f_o_k_u_s)
-            "Bible + GPT" -> context.getString(R.string.teksartikelbible_gpt)
-            else -> "Deskripsi tidak tersedia untuk artikel ini."
-        }
+        val description = getDescriptionFromTitle(resource.title, context)
 
         holder.itemView.setOnClickListener {
-            val context = holder.itemView.context
             val intent = Intent(context, Materi::class.java).apply {
                 putExtra("TITLE", resource.title)
                 putExtra("YOUTUBE_ID", resource.youtubeId)
                 putExtra("PDF_URL", resource.pdfUrl)
-                putExtra("DESKRIPSI", deskripsi)
+                putExtra("DESKRIPSI", description)
             }
             context.startActivity(intent)
         }
@@ -52,8 +44,26 @@ class ResourcesAdapter(
 
     override fun getItemCount() = resourceList.size
 
+    private fun getDescriptionFromTitle(title: String, context: Context): String {
+        val matchedEntry = descriptionMap.entries.find {
+            context.getString(it.key) == title
+        }
+        return matchedEntry?.value?.let { context.getString(it) }
+            ?: context.getString(R.string.deskripsi_tidak_tersedia)
+    }
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val title: TextView = itemView.findViewById(R.id.resourcesTextView)
         val image: ImageView = itemView.findViewById(R.id.resourcesImage)
+    }
+
+    companion object {
+        private val descriptionMap = mapOf(
+            R.string.aidanalkitab to R.string.teksartikelaidanalkitab,
+            R.string.alkitab_gpt to R.string.teksartikelalkitab_gpt,
+            R.string.metode_ai_squared to R.string.teksartikelmetode_ai_squared,
+            R.string.metode_f_o_k_u_s to R.string.teksartikelmetode_f_o_k_u_s,
+            R.string.bible_gpt to R.string.teksartikelbible_gpt
+        )
     }
 }

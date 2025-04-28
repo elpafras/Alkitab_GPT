@@ -13,9 +13,9 @@ import org.sabda.gpt.ChatActivity
 import org.sabda.gpt.adapter.ChatPreviewAdapter
 import org.sabda.gpt.base.BaseFragment
 import org.sabda.gpt.data.local.AppDatabase
+import org.sabda.gpt.data.local.ChatMetaData
 import org.sabda.gpt.data.local.ChatbotDao
 import org.sabda.gpt.databinding.FragmentChatBinding
-import org.sabda.gpt.model.ChatbotData
 import org.sabda.gpt.utility.NetworkUtil
 
 class AIFragment : BaseFragment<FragmentChatBinding>() {
@@ -27,7 +27,7 @@ class AIFragment : BaseFragment<FragmentChatBinding>() {
     private var callback: ChatFragmentCallback? = null
 
     private lateinit var messageDao: ChatbotDao
-    private val chatPreview: MutableList<ChatbotData> = mutableListOf()
+    private val chatPreview: MutableList<ChatMetaData> = mutableListOf()
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?) =
         FragmentChatBinding.inflate(inflater, container, false)
@@ -76,28 +76,9 @@ class AIFragment : BaseFragment<FragmentChatBinding>() {
     }
 
     private fun loadChatPreviews() {
-        messageDao.getAllMessages().observe(viewLifecycleOwner) { previews ->
-            val existingPreviews = mutableSetOf<Pair<Long, Int>>()
-
-            val previewList = previews.groupBy { it.chatId }.mapNotNull {
-                val previewMessage = it.value.first()
-                val chatId = it.key
-                val counter = previewMessage.counter
-
-                if (existingPreviews.contains(Pair(chatId, counter))) {
-                    return@mapNotNull null
-                } else {
-                    existingPreviews.add(Pair(chatId, counter))
-                    ChatbotData(
-                        text = previewMessage.text,
-                        isSent = previewMessage.isSent,
-                        chatId = chatId,
-                        timestamp = previewMessage.timestamp,
-                        counter = counter
-                    )
-                }
-            }
-            (binding.previewRecyclerView.adapter as? ChatPreviewAdapter)?.updateData(previewList)
+        messageDao.getChatMetaData().observe(viewLifecycleOwner) { previews ->
+            val sortedList = previews.sortedByDescending { it.chatId }
+            (binding.previewRecyclerView.adapter as? ChatPreviewAdapter)?.updateData(sortedList)
         }
     }
 

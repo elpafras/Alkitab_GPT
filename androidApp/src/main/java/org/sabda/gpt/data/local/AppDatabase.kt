@@ -6,9 +6,9 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.internal.synchronized
-import org.sabda.gpt.model.ChatbotData
+import org.sabda.gpt.model.ChatMessage
 
-@Database(entities = [ChatbotData::class], version = 1, exportSchema = false)
+@Database(entities = [ChatMessage::class, ChatMetaData::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun chatbotDao(): ChatbotDao
 
@@ -23,7 +23,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "chat_database"
-                ).build()
+                ).fallbackToDestructiveMigration().build()
                 INSTANCE = instance
                 instance
             }

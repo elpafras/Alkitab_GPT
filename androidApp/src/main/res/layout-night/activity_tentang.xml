@@ -12,7 +12,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white">
+        android:background="@color/gray_dark_toolbar">
 
         <ImageView
             android:id="@+id/back"
@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/tentang"
-            android:textColor="@color/darkblue"
+            android:textColor="@color/white_dark_tc"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_marginStart="30dp"/>
@@ -153,7 +153,5 @@
                 android:paddingBottom="50dp"/>
 
         </LinearLayout>
-
     </ScrollView>
-
 </RelativeLayout>

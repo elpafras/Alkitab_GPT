@@ -1,6 +1,6 @@
 package org.sabda.gpt.data.repository
 
-import android.text.Html
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
@@ -15,6 +15,8 @@ class ChatRepository {
         return withContext(Dispatchers.IO) {
             try {
                 val url = URL(urlString + message)
+
+                Log.d("ChatRepository", "fetchChatResponse: $url")
                 val connection = url.openConnection() as HttpURLConnection
                 connection.apply {
                     requestMethod = "GET"
@@ -26,7 +28,9 @@ class ChatRepository {
                 if (connection.responseCode == HttpURLConnection.HTTP_OK) {
                     BufferedReader(InputStreamReader(connection.inputStream)).use {
                         val rawResponse = it.readText()
-                        return@withContext stripHtml(rawResponse)
+
+                        Log.d("ChatRepository", "fetchChatResponse - rawResponse: $rawResponse ")
+                        return@withContext rawResponse
                     }
                 } else {
                     null
@@ -36,10 +40,4 @@ class ChatRepository {
             }
         }
     }
-
-    private fun stripHtml(html: String): String {
-        val cleanText = Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY).toString()
-        return cleanText.replace(Regex("\\s+"), " ").trim()
-    }
-
 }

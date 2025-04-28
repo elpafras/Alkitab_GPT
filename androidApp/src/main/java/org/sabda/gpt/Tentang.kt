@@ -1,24 +1,21 @@
 package org.sabda.gpt
 
 import android.os.Bundle
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import org.sabda.gpt.databinding.ActivityTentangBinding
 import org.sabda.gpt.utility.NetworkUtil
 import org.sabda.gpt.utility.NetworkUtil.NetworkChangeCallback
 import org.sabda.gpt.utility.showToast
 
 class Tentang : AppCompatActivity(), NetworkChangeCallback {
 
-    private lateinit var back: ImageView
-    private lateinit var version: TextView
-    private lateinit var sabdaLink: TextView
-    private lateinit var kotakSaranLink: TextView
+    private lateinit var binding: ActivityTentangBinding
     private var isConnected: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tentang)
+        binding = ActivityTentangBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initViews()
         setupListener()
@@ -26,21 +23,16 @@ class Tentang : AppCompatActivity(), NetworkChangeCallback {
     }
 
     private fun initViews() {
-        back = findViewById(R.id.back)
-        version = findViewById(R.id.version)
-        sabdaLink = findViewById(R.id.sabdaLink)
-        kotakSaranLink = findViewById(R.id.kotakSaranLink)
-
         isConnected = NetworkUtil.isNetworkAvailable(this)
         updateConnectionStatus(isConnected)
-        version.text = "Versi: 2.2"
+        val versi = packageManager.getPackageInfo(packageName, 0).versionName
+        binding.version.text = getString(R.string.version, versi)
     }
 
     private fun setupListener() {
-        back.setOnClickListener { finish() }
-
-        sabdaLink.setOnClickListener { handleClick("https://sabda.app") }
-        kotakSaranLink.setOnClickListener { handleClick("mailto:apps@sabda.org") }
+        binding.back.setOnClickListener { finish() }
+        binding.sabdaLink.setOnClickListener { handleClick("https://sabda.app") }
+        binding.kotakSaranLink.setOnClickListener { handleClick("mailto:apps@sabda.org") }
     }
 
     private fun registerNetworkCallback() {
@@ -51,8 +43,8 @@ class Tentang : AppCompatActivity(), NetworkChangeCallback {
 
     private fun updateConnectionStatus(isConnected: Boolean) {
         this.isConnected = isConnected
-        sabdaLink.isEnabled = isConnected
-        kotakSaranLink.isEnabled = isConnected
+        binding.sabdaLink.isEnabled = isConnected
+        binding.kotakSaranLink.isEnabled = isConnected
 
         if (!isConnected) applicationContext.showToast(getString(R.string.toast_offline))
     }

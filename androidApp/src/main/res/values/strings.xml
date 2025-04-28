@@ -51,7 +51,7 @@
     <string name="ai4cg">AI-4-Church &amp; AI-4-GOD</string>
     <string name="situs_ai">Situs: AI</string>
     <string name="release_note"><font size="20">Release Notes</font></string>
-    <string name="message_release_notes">Alkitab GPT (2.2)\n- Penambahan Chatbox\n- Penambahan Materi di bagian Resources</string>
+    <string name="message_release_notes">Alkitab GPT (3.0-beta-4)*\n- Optimasi Fitur Chatbox\n- Relayouting materi</string>
     <string name="openai">OpenAI</string>
     <string name="wa_chatgpt">WA: ChatGPT</string>
     <string name="wa_copilot">WA: Copilot</string>
@@ -109,6 +109,7 @@
     <string name="metode_ai_squared">Metode AI Squared</string>
     <string name="metode_f_o_k_u_s">Metode F\.O\.K\.U\.S\.</string>
     <string name="bible_gpt">Bible + GPT</string>
+    <string name="deskripsi_tidak_tersedia">Deskripsi tidak tersedia untuk artikel ini.</string>
 
     <!--Teks Artikel-->
     <string name="teksartikelaidanalkitab">Secara pasti, AI telah memberi dampak yang sangat luas dalam pelayanan Kristen, termasuk terhadap Alkitab. Mari kita berbincang-bincang mengenai dampak AI seputar terjemahan, distribusi, dan penggunaan Alkitab di #AITalks: “AI dan Alkitab”.</string>
@@ -122,4 +123,17 @@
     <string name="prompt_plus">Maksimal 250 karakter</string>
     <string name="no_response">AI tidak memberikan jawaban. Silakan coba lagi dalam beberapa saat.</string>
     <string name="no_response_title">Tidak ada respon</string>
+    <string name="hint">Masukkan Prompt di sini</string>
+    <string name="no_response2">⚠️ AI tidak memberikan respon. Coba lagi nanti.</string>
+    <string name="timeout_error">⏰ Timeout: AI tidak merespon. Coba kirim ulang.</string>
+    <string name="no_response3">❌ Terjadi kesalahan saat menghubungi AI.❌ Terjadi kesalahan saat menghubungi AI.</string>
+
+    <!-- Preview Text -->
+    <string name="dialog_title_delete">Hapus Chat</string>
+    <string name="dialog_message_delete">Apakah Anda yakin ingin menghapus chat ini?</string>
+    <string name="dialog_yes">Ya</string>
+    <string name="dialog_no">Tidak</string>
+
+
+
 </resources>
